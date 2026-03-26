@@ -1,3 +1,5 @@
+import './chat.css'
+
 interface Message {
   id?: number
   from?: string
@@ -10,7 +12,7 @@ interface ChatProps {
 
 function Chat({ messages }: ChatProps) {
   return (
-    <div>
+    <div className='chat-list'>
       <h2>Messages</h2>
       <ul>
         {messages.map((msg, idx) => (
