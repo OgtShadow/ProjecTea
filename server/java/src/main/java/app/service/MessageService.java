@@ -1,7 +1,6 @@
 package app.service;
 
 import app.model.Message;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -14,11 +13,6 @@ public class MessageService {
 
     private final AtomicLong idCounter = new AtomicLong(1);
     private final List<Message> messages = Collections.synchronizedList(new ArrayList<>());
-    private final SimpMessagingTemplate messagingTemplate;
-
-    public MessageService(SimpMessagingTemplate messagingTemplate) {
-        this.messagingTemplate = messagingTemplate;
-    }
 
     public List<Message> findAll() {
         return new ArrayList<>(messages);
@@ -28,7 +22,6 @@ public class MessageService {
         long id = idCounter.getAndIncrement();
         Message saved = new Message(id, message.getFrom(), message.getText());
         messages.add(saved);
-        this.messagingTemplate.convertAndSend("/topic/messages", saved);
         return saved;
     }
 }

@@ -2,6 +2,7 @@ package app.controller;
 
 import app.model.Message;
 import app.service.MessageService;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,9 +18,11 @@ import java.util.List;
 public class MessageController {
 
     private final MessageService messageService;
+    private final SimpMessagingTemplate messagingTemplate;
 
-    public MessageController(MessageService messageService) {
+    public MessageController(MessageService messageService, SimpMessagingTemplate messagingTemplate) {
         this.messageService = messageService;
+        this.messagingTemplate = messagingTemplate;
     }
 
     @GetMapping
@@ -29,6 +32,8 @@ public class MessageController {
 
     @PostMapping
     public Message sendMessage(@RequestBody Message message) {
-        return messageService.add(message);
+        Message saved = messageService.add(message);
+        messagingTemplate.convertAndSend("/topic/messages", saved);
+        return saved;
     }
 }
