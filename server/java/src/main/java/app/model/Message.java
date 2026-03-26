@@ -4,6 +4,7 @@ public class Message {
     private Long id;
     private String from;
     private String text;
+    private String timestamp;
 
     public Message() {
     }
@@ -12,6 +13,7 @@ public class Message {
         this.id = id;
         this.from = from;
         this.text = text;
+        timestamp = java.time.Instant.now().toString();
     }
 
     public Long getId() {
@@ -37,4 +39,13 @@ public class Message {
     public void setText(String text) {
         this.text = text;
     }
+
+    public String getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
+    }
+
 }
