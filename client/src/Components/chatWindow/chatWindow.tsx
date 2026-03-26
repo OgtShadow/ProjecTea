@@ -79,12 +79,16 @@ function ChatWindow() {
 
   return (
     <div className="chat-window">
-      <h2>Chat Window</h2>
-      <Chat messages={messages} />
-      <MessageSender
-        wsConnected={wsConnected}
-        onSendWs={sendWsMessage}
-      />
+      <h2>Chat Window   Status: {wsConnected ? 'connected' : 'disconnected'}</h2>
+      <div className="chat-messages">
+        <Chat messages={messages} />
+      </div>
+      <div className="chat-sender">
+        <MessageSender
+          wsConnected={wsConnected}
+          onSendWs={sendWsMessage}
+        />
+      </div>
     </div>
   )
 }

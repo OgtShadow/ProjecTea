@@ -4,8 +4,15 @@ import './index.css'
 import App from './App.tsx'
 
 // SockJS / some libs may expect `global` (node-style); in browser use globalThis.
-;(window as any).global = window as any
-;(window as any).process = { env: { NODE_ENV: 'development' } }
+declare global {
+  interface Window {
+    global?: Window
+    process?: { env: { NODE_ENV: string } }
+  }
+}
+
+window.global = window
+window.process = { env: { NODE_ENV: 'development' } }
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

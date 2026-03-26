@@ -17,7 +17,6 @@ function MessageSender({ wsConnected, onSendWs }: MessageSenderProps) {
 
   return (
     <div className='messageSender'>
-      <p>Status: {wsConnected ? 'connected' : 'disconnected'}</p>
         <input
           type='text'
           value={inputFrom}
