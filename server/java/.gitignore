@@ -31,3 +31,8 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Ignore generated dev keystore
+src/main/resources/keystore.p12
+# Ignore generated PEMs for dev
+src/main/resources/certs/

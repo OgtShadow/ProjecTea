@@ -12,7 +12,7 @@ interface Message {
   text: string
 }
 
-const BACKEND_URL = 'http://localhost:8082'
+const BACKEND_URL = ''
 
 function ChatWindow() {
   const [wsConnected, setWsConnected] = useState(false)
