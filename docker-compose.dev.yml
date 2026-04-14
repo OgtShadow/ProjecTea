@@ -32,3 +32,16 @@ services:
     command: sh -c "mvn -f /app/pom.xml spring-boot:run"
     ports:
       - "8082:8082"
+
+  nginx:
+    image: nginx:stable
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./server/java/src/main/resources/certs:/etc/nginx/certs:ro
+    depends_on:
+      - frontend
+      - java-backend
