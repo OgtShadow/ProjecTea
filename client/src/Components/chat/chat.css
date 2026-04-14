@@ -1,0 +1,14 @@
+.chat-list {
+  text-align: left;
+}
+
+.chat-list ul {
+  padding-left: 16px;
+  margin: 0;
+  list-style: none;
+}
+
+.chat-list li {
+  text-align: left;
+  margin-bottom: 8px;
+}
