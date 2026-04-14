@@ -30,4 +30,4 @@ services:
       - /app/.m2
     command: sh -c "mvn -f /app/pom.xml spring-boot:run"
     ports:
-      - "8082:8080"
+      - "8082:8082"

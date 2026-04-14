@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Ignore generated dev keystore
+src/main/resources/keystore.p12
