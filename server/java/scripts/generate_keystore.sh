@@ -19,7 +19,6 @@ if ! command -v openssl >/dev/null 2>&1; then
 	exit 1
 fi
 
-# Create temporary openssl config to avoid missing default openssl.cnf issues on some systems
 CONFIG_PATH="$SCRIPT_DIR/temp_openssl.cnf"
 cat > "$CONFIG_PATH" <<'EOF'
 [req]
@@ -44,7 +43,13 @@ openssl req -new -x509 -key key.pem -out cert.pem -days 365 -config "$CONFIG_PAT
 echo "Creating PKCS12 keystore at $RESOURCES_DIR/keystore.p12 (password: changeit)"
 openssl pkcs12 -export -in cert.pem -inkey key.pem -out "$RESOURCES_DIR/keystore.p12" -name projecTea -passout pass:changeit
 
+CERTS_DIR="$RESOURCES_DIR/certs"
+mkdir -p "$CERTS_DIR"
+cp cert.pem "$CERTS_DIR/localhost.pem"
+cp key.pem "$CERTS_DIR/localhost-key.pem"
+
 echo "Cleaning temporary files..."
 rm -f key.pem cert.pem "$CONFIG_PATH"
 
 echo "Done. Keystore: $RESOURCES_DIR/keystore.p12 (password: changeit)"
+echo "PEM files: $CERTS_DIR/localhost.pem, $CERTS_DIR/localhost-key.pem"

@@ -16,7 +16,6 @@ if (-not (Get-Command openssl -ErrorAction SilentlyContinue)) {
 
 Write-Host "Generating key and self-signed certificate (valid 365 days)..."
 
-# create temporary openssl config to avoid missing default openssl.cnf issues on Windows
 $configPath = Join-Path $scriptDir 'temp_openssl.cnf'
 $configContent = @"
 [req]
@@ -45,9 +44,15 @@ try {
 	Write-Host "Creating PKCS12 keystore at $keystorePath (password: changeit)"
 	& openssl pkcs12 -export -in cert.pem -inkey key.pem -out $keystorePath -name projecTea -passout pass:changeit
 
+	$certsDir = Join-Path $resourcesDir 'certs'
+	if (-not (Test-Path $certsDir)) { New-Item -ItemType Directory -Path $certsDir -Force | Out-Null }
+	Copy-Item -Force cert.pem -Destination (Join-Path $certsDir 'localhost.pem')
+	Copy-Item -Force key.pem -Destination (Join-Path $certsDir 'localhost-key.pem')
+
 	Write-Host "Cleaning temporary files..."
 	Remove-Item -Force key.pem, cert.pem
 	Write-Host "Done. Keystore: $keystorePath (password: changeit)"
+	Write-Host "PEM files: $(Join-Path $certsDir 'localhost.pem'), $(Join-Path $certsDir 'localhost-key.pem')"
 } catch {
 	Write-Error "Error generating certificate: $_"
 	if (Test-Path key.pem) { Remove-Item -Force key.pem -ErrorAction SilentlyContinue }
