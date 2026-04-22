@@ -13,7 +13,7 @@ import java.util.Arrays;
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
-    @Value("${app.security.allowed-origins:http://localhost:8080,https://localhost,https://localhost:443,http://localhost:5173,https://localhost:5173}")
+    @Value("${app.security.allowed-origins:http://localhost:8080,https://localhost:8080,https://localhost,https://localhost:443,http://localhost:5173,https://localhost:5173}")
     private String allowedOrigins;
 
     @Override
