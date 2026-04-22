@@ -1,6 +1,8 @@
 package app.controller;
 
+import app.dto.CreateMessageRequest;
 import app.model.Message;
+import app.model.ValidationErrorResponse;
 import app.service.MessageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -9,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,10 +50,16 @@ public class MessageController {
     @Operation(summary = "Send a message", description = "Stores a new message and broadcasts it to connected websocket clients.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Message stored successfully",
-                    content = @Content(schema = @Schema(implementation = Message.class)))
+                    content = @Content(schema = @Schema(implementation = Message.class))),
+            @ApiResponse(responseCode = "400", description = "Validation error",
+                    content = @Content(schema = @Schema(implementation = ValidationErrorResponse.class)))
     })
-    public Message sendMessage(@RequestBody Message message) {
-        Message saved = messageService.add(message);
+    public Message sendMessage(@Valid @RequestBody CreateMessageRequest message) {
+        Message input = new Message();
+        input.setFrom(message.getFrom());
+        input.setText(message.getText());
+
+        Message saved = messageService.add(input);
         messagingTemplate.convertAndSend("/topic/messages", saved);
         return saved;
     }
