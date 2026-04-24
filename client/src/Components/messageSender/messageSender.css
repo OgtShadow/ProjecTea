@@ -7,14 +7,6 @@
   margin-bottom: 15px;
 }
 
-.name_input {
-  width: 200px;
-  min-width: 200px;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
 .message_input {
   flex: 1;
   min-width: 0;
@@ -35,4 +27,9 @@
 
 .send_button:hover {
   background: #005dc1;
+}
+
+.send_button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }

@@ -40,9 +40,15 @@ export default defineConfig({
       interval: 100,
     },
     proxy: {
-      '/api': 'http://localhost:8082',
+      '/api': {
+        target: 'https://java-backend:8082',
+        changeOrigin: true,
+        secure: false,
+      },
       '/ws': {
-        target: 'http://localhost:8082',
+        target: 'https://java-backend:8082',
+        changeOrigin: true,
+        secure: false,
         ws: true,
       },
     },
