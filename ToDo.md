@@ -87,9 +87,9 @@
 ## Krótkie checklisty do odhaczenia (konkretne kroki)
 - [✅] Ustawić i przetestować `docker-compose.dev.yml` z wszystkimi usługami.
 - [✅] Skonfigurować certyfikat HTTPS (dev) i potwierdzić działanie.
-- [ ] Implementować JWT + sesje (Spring Security).
-- [ ] Zdefiniować i wdrożyć Swagger/OpenAPI dla głównych endpointów.
-- [ ] Podstawić prosty kanał WebSocket i przetestować komunikację z React.
+- [✅] Implementować JWT + sesje (Spring Security).
+- [✅] Zdefiniować i wdrożyć Swagger/OpenAPI dla głównych endpointów.
+- [✅] Podstawić prosty kanał WebSocket i przetestować komunikację z React.
 - [ ] MVP czat: wysyłanie/odbieranie tekstu + proste UI.
 - [ ] Dodawanie plików/zdjęć — backend storage + frontend upload.
 - [ ] MVP Kanban: CRUD zadań + przypisywanie.
