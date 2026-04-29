@@ -186,6 +186,29 @@
                     }
                 }
             }
+        },
+        "/health": {
+            "get": {
+                "description": "Prosty endpoint do sprawdzenia, czy serwer jest dostępny i działający prawidłowo",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Health"
+                ],
+                "summary": "Sprawdzenie zdrowotności serwera",
+                "responses": {
+                    "200": {
+                        "description": "Serwer działa poprawnie",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {

@@ -150,6 +150,22 @@ paths:
       summary: Przesyłanie pliku
       tags:
       - Files
+  /health:
+    get:
+      description: Prosty endpoint do sprawdzenia, czy serwer jest dostępny i działający
+        prawidłowo
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Serwer działa poprawnie
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Sprawdzenie zdrowotności serwera
+      tags:
+      - Health
 schemes:
 - http
 - https
