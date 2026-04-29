@@ -1,6 +1,9 @@
 FROM golang:1.23-alpine AS build
 WORKDIR /app
 
+COPY go.mod go.sum* ./
+RUN go mod download || echo "go.sum not found, continuing..."
+
 COPY . .
 
 RUN go env -w GO111MODULE=on && \

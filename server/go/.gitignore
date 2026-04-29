@@ -1,0 +1,28 @@
+# Uploads directory - nie trackujemy plikami
+/uploads/*
+!/uploads/.gitkeep
+
+# Go build output
+/app
+*.o
+*.a
+*.so
+.DS_Store
+
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Test binaries
+*.test
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~

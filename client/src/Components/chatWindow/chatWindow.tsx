@@ -159,6 +159,10 @@ function ChatWindow() {
     })
   }
 
+  const handleFileUpload = (file: File) => {
+    console.log('Plik wysłany:', file.name)
+  }
+
   if (isCheckingSession) {
     return <div className='chat-window'>Checking session...</div>
   }
@@ -207,6 +211,7 @@ function ChatWindow() {
         <MessageSender
           wsConnected={wsConnected}
           onSendWs={sendWsMessage}
+          onSendFile={handleFileUpload}
         />
       </div>
     </div>

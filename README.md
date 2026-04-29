@@ -88,7 +88,15 @@ cd server/java
 
 ### Backend Go (opcjonalnie)
 
-Obecnie `server/go/src/main.go` jest pusty, wiec backend Go nie udostepnia jeszcze logiki aplikacyjnej.
+Backend Go teraz udostepnia serwis do wysylania i pobierania plikow w czacie.
+
+- Base URL: `https://localhost:8081`
+- Upload pliku: `POST /api/files/upload`
+- Pobieranie pliku: `GET /api/files/download/{fileId}`
+- Listowanie plikow: `GET /api/files`
+- Usuwanie pliku: `DELETE /api/files/{fileId}`
+
+Szczegolowa dokumentacja: [server/go/README.md](server/go/README.md)
 
 ## Adresy i endpointy
 
