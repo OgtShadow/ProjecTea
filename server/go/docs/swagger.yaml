@@ -1,0 +1,156 @@
+basePath: /
+definitions:
+  main.FileInfo:
+    description: Informacje o pliku w systemie
+    properties:
+      downloadUrl:
+        example: /api/files/download/1704067800000000000_document.pdf
+        type: string
+      fileId:
+        example: 1704067800000000000_document.pdf
+        type: string
+      mimeType:
+        example: application/pdf
+        type: string
+      name:
+        example: document.pdf
+        type: string
+      size:
+        example: 1024000
+        type: integer
+      uploadAt:
+        example: "2026-04-29T10:30:00Z"
+        type: string
+    type: object
+host: localhost:8081
+info:
+  contact: {}
+  description: Informacje o pliku w systemie
+  title: ProjecTea File Service API
+  version: "1.0"
+paths:
+  /api/files:
+    get:
+      description: Zwraca listę wszystkich plików przesłanych do serwera. Zawiera
+        informacje o każdym pliku takie jak nazwa, rozmiar, data wysłania i URL do
+        pobrania.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Lista plików
+          schema:
+            additionalProperties:
+              items:
+                $ref: '#/definitions/main.FileInfo'
+              type: array
+            type: object
+        "500":
+          description: Błąd serwera
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Lista wszystkich plików
+      tags:
+      - Files
+  /api/files/{fileId}:
+    delete:
+      description: Pozwala na usunięcie pliku z serwera na podstawie jego identyfikatora.
+        Po usunięciu plik nie będzie dostępny do pobrania.
+      parameters:
+      - description: Identyfikator pliku
+        in: path
+        name: fileId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Plik pomyślnie usunięty
+          schema:
+            additionalProperties:
+              type: boolean
+            type: object
+        "404":
+          description: Plik nie znaleziony
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Błąd serwera
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Usuwanie pliku
+      tags:
+      - Files
+  /api/files/download/{fileId}:
+    get:
+      description: Pozwala na pobranie pliku na podstawie jego identyfikatora. Plik
+        jest zwracany jako załącznik do pobrania.
+      parameters:
+      - description: Identyfikator pliku
+        in: path
+        name: fileId
+        required: true
+        type: string
+      produces:
+      - application/octet-stream
+      responses:
+        "200":
+          description: Plik pomyślnie pobierany
+          schema:
+            type: file
+        "404":
+          description: Plik nie znaleziony
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Pobieranie pliku
+      tags:
+      - Files
+  /api/files/upload:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Pozwala na przesłanie pliku do serwera. Maksymalny rozmiar pliku
+        to 100MB. Plik otrzymuje unikalny identyfikator opparty na czasowniku nanosekund
+        i nazwie oryginału.
+      parameters:
+      - description: Plik do przesłania
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Plik pomyślnie przesłany
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: 'Błąd: brak pliku lub plik za duży'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Błąd serwera
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Przesyłanie pliku
+      tags:
+      - Files
+schemes:
+- http
+- https
+swagger: "2.0"

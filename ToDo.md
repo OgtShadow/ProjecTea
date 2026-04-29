@@ -92,6 +92,8 @@
 - [✅] Podstawić prosty kanał WebSocket i przetestować komunikację z React.
 - [✅] MVP czat: wysyłanie/odbieranie tekstu + proste UI.
 - [✅] Dodawanie plików/zdjęć — backend storage + frontend upload.
+- [ ] testy wydajnościowe API
+- [ ] testowy prosty serwis wykorzystujący gRPC/MQTT itp.
 - [ ] MVP Kanban: CRUD zadań + przypisywanie.
 - [ ] Kalendarz: tworzenie wydarzeń i integracja z Kanban.
 - [ ] Napisać podstawowe testy jednostkowe i E2E.
