@@ -35,7 +35,10 @@ function MessageSender({ wsConnected, onSendWs, onSendFile }: MessageSenderProps
 
       if (response.ok) {
         const data = await response.json()
-        onSendWs(`📎 Wysłany plik: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)}MB)`)
+        const downloadUrl = data?.file?.downloadUrl ?? '/api/files'
+        onSendWs(
+          `📎 Wysłany plik: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)}MB) pobierz: ${downloadUrl}`,
+        )
         onSendFile?.(file)
       } else {
         alert('Błąd podczas wysyłania pliku')

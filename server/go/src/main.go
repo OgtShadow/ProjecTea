@@ -35,10 +35,15 @@ type FileService struct {
 
 // NewFileService tworzy nowy serwis do obsługi plików
 func NewFileService(uploadDir string) *FileService {
-	if err := os.MkdirAll(uploadDir, 0755); err != nil {
+	absUploadDir, err := filepath.Abs(uploadDir)
+	if err != nil {
+		log.Fatalf("Nie można ustalić bezwzględnej ścieżki uploads: %v", err)
+	}
+
+	if err := os.MkdirAll(absUploadDir, 0755); err != nil {
 		log.Fatalf("Nie można stworzyć katalogu uploads: %v", err)
 	}
-	return &FileService{uploadDir: uploadDir}
+	return &FileService{uploadDir: absUploadDir}
 }
 
 // UploadFile obsługuje upload pliku
