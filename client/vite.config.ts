@@ -40,6 +40,11 @@ export default defineConfig({
       interval: 100,
     },
     proxy: {
+      '/api/files': {
+        target: 'http://go-backend:8081',
+        changeOrigin: true,
+        secure: false,
+      },
       '/api': {
         target: 'https://java-backend:8082',
         changeOrigin: true,
