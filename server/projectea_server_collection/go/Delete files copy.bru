@@ -1,0 +1,26 @@
+meta {
+  name: Delete files copy
+  type: http
+  seq: 4
+}
+
+delete {
+  url: http://localhost:8081/api/files/{{lastFileId}}
+  body: none
+  auth: inherit
+}
+
+body:file {
+  file: @file(C:\Users\pszer\OneDrive\Dokumenty\repositories\ProjecTea\server\projectea_server_collection\go\images.jpg) @contentType(image/jpeg)
+}
+
+tests {
+  test("File deleted successfully", async function () {
+    expect(res.status).to.equal(200);
+  });
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

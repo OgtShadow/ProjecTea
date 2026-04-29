@@ -1,0 +1,28 @@
+meta {
+  name: Post message
+  type: http
+  seq: 4
+}
+
+post {
+  url: https://localhost/api/messages
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "text": "woof woof bark bark"
+  }
+}
+
+tests {
+  test("message post returns 401 when NOT authenticated", async function () {
+    expect(res.status).to.equal(401);
+  });
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

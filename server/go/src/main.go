@@ -234,6 +234,17 @@ func isPathInDir(fullPath, dir string) bool {
 	return !filepath.IsAbs(rel) && rel != ".." && !filepath.HasPrefix(rel, "..")
 }
 
+// @Summary Sprawdzenie zdrowotności serwera
+// @Description Prosty endpoint do sprawdzenia, czy serwer jest dostępny i działający prawidłowo
+// @Produce json
+// @Success 200 {object} map[string]string "Serwer działa poprawnie"
+// @Router /health [get]
+// @Tags Health
+func health(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprint(w, `{"status":"healthy"}`)
+}
+
 func main() {
 	router := mux.NewRouter()
 	fileService := NewFileService(uploadDir)
@@ -243,18 +254,7 @@ func main() {
 	router.HandleFunc("/api/files", fileService.ListFiles).Methods(http.MethodGet)
 	router.HandleFunc("/api/files/download/{fileId}", fileService.DownloadFile).Methods(http.MethodGet)
 	router.HandleFunc("/api/files/{fileId}", fileService.DeleteFile).Methods(http.MethodDelete)
-
-	// Health check
-	// @Summary Sprawdzenie zdrowotności serwera
-	// @Description Prosty endpoint do sprawdzenia, czy serwer jest dostępny i działający prawidłowo
-	// @Produce json
-	// @Success 200 {object} map[string]string "Serwer działa poprawnie"
-	// @Router /health [get]
-	// @Tags Health
-	router.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		fmt.Fprint(w, `{"status":"healthy"}`)
-	}).Methods(http.MethodGet)
+	router.HandleFunc("/health", health).Methods(http.MethodGet)
 
 	// Swagger UI
 	router.PathPrefix("/swagger/").Handler(httpSwagger.Handler(

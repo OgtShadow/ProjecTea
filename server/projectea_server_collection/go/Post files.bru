@@ -1,0 +1,38 @@
+meta {
+  name: Post files
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://localhost:8081/api/files/upload
+  body: multipartForm
+  auth: inherit
+}
+
+body:multipart-form {
+  file: @file(C:\Users\pszer\OneDrive\Dokumenty\repositories\ProjecTea\server\projectea_server_collection\go\images.jpg)
+}
+
+body:file {
+  file: @file(C:\Users\pszer\OneDrive\Dokumenty\repositories\ProjecTea\server\projectea_server_collection\go\images.jpg) @contentType(image/jpeg)
+}
+
+tests {
+  test("post files returns 200 and a success",async function () {
+    expect (res.status).to.equal(200)
+    expect(res.body.success).to.equal(true);
+  })
+  
+  test("post files returns json with our file name",async function () {
+    expect(res.body.file.name).to.equal("images.jpg");
+    expect(res.getHeader('content-type')).to.include("application/json");
+    const setId = res.body.file.fileId;
+    bru.setVar("lastFileId", setId);
+  })
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

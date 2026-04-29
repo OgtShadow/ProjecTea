@@ -1,17 +1,17 @@
 meta {
   name: Get messages
   type: http
-  seq: 2
+  seq: 3
 }
 
 get {
-  url: https://localhost:8082/api/messages
+  url: https://localhost/api/messages
   body: none
   auth: none
 }
 
 tests {
-  test("Messages endpoint returns 200", async function () {
+  test("Messages endpoint returns 200 when authenticated", async function () {
     expect(res.status).to.equal(200);
   });
 }
