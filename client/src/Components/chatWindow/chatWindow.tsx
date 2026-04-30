@@ -3,8 +3,8 @@ import './chatWindow.css'
 import SockJS from 'sockjs-client'
 import { Client } from '@stomp/stompjs'
 import type { Frame, IMessage } from '@stomp/stompjs'
-import MessageSender from '../messageSender/messageSender'
-import Chat from '../chat/chat'
+import MessageSender from './messageSender/messageSender'
+import Chat from './chat/chat'
 import apiFetch from '../../api'
 
 interface Message {
