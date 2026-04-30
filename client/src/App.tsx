@@ -1,4 +1,4 @@
-import ChatWindow from './Components/chatWindow/chatWindow'
+import Content from './Components/content/content'
 import Navigation from './Components/navigation/navigation'
 import './App.css'
 
@@ -6,7 +6,7 @@ function App() {
   return (
     <div className="App">
       <Navigation />
-      <ChatWindow />
+      <Content />
     </div>
   )
 }
