@@ -1,18 +1,31 @@
 import './navigation.css'
 import Login from '../login/login'
 
+type ActiveView = 'chat' | 'files'
+
 interface Props {
   currentUser: string | null
   setCurrentUser: (u: string | null) => void
+  activeView: ActiveView
+  setActiveView: (view: ActiveView) => void
 }
 
-function Navigation({ currentUser, setCurrentUser }: Props) {
+function Navigation({ currentUser, setCurrentUser, activeView, setActiveView }: Props) {
   return (
     <div className="navigation">
       <div>
-        <button className='nav-button'>chat</button>
-        <button className='nav-button'>files</button>
-        <button className='nav-button'>kanban</button>
+        <button
+          className={`nav-button${activeView === 'chat' ? ' active' : ''}`}
+          onClick={() => setActiveView('chat')}
+        >
+          chat
+        </button>
+        <button
+          className={`nav-button${activeView === 'files' ? ' active' : ''}`}
+          onClick={() => setActiveView('files')}
+        >
+          files
+        </button>
       </div>
 
       <div style={{ marginTop: 'auto' }}>
