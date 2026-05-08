@@ -13,10 +13,6 @@ interface Message {
   text: string
 }
 
-interface AuthUserResponse {
-  username: string
-}
-
 const BACKEND_URL = ''
 
 interface Props {
@@ -63,14 +59,12 @@ function ChatWindow({ currentUser, isCheckingSession }: Props) {
     })
 
     return client
-  }, [currentUser])
+  }, [])
 
   // Session check happens in App; ChatWindow receives currentUser prop.
 
   useEffect(() => {
     if (!currentUser) {
-      setWsConnected(false)
-      setMessages([])
       if (stompClient.active) {
         stompClient.deactivate()
       }
@@ -115,9 +109,9 @@ function ChatWindow({ currentUser, isCheckingSession }: Props) {
 
   return (
     <div className="chat-window">
-      <h2>Chat Window Status: {wsConnected ? 'connected' : 'disconnected'}</h2>
+      <h2>Chat Window Status: {currentUser && wsConnected ? 'connected' : 'disconnected'}</h2>
       <div className="chat-messages">
-        <Chat messages={messages} />
+        <Chat messages={currentUser ? messages : []} />
       </div>
       <div className="chat-sender">
         <MessageSender

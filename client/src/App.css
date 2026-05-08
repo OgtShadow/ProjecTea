@@ -30,6 +30,10 @@
     padding: 16px;
 }
 
+.content > * {
+    height: 100%;
+}
+
 @media (max-width: 720px) {
     .App {
         flex-direction: column;

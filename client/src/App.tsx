@@ -1,12 +1,16 @@
 import { useEffect, useState } from 'react'
 import Navigation from './Components/navigation/navigation'
 import ChatWindow from './Components/chatWindow/chatWindow'
+import FilesWindow from './Components/filesWindow/filesWindow.tsx'
 import './App.css'
 import apiFetch from './api'
+
+type ActiveView = 'chat' | 'files'
 
 function App() {
   const [currentUser, setCurrentUser] = useState<string | null>(null)
   const [isCheckingSession, setIsCheckingSession] = useState(true)
+  const [activeView, setActiveView] = useState<ActiveView>('chat')
 
   useEffect(() => {
     apiFetch('/api/auth/me')
@@ -25,8 +29,17 @@ function App() {
 
   return (
     <div className="App">
-      <Navigation currentUser={currentUser} setCurrentUser={setCurrentUser} />
-      <ChatWindow currentUser={currentUser} isCheckingSession={isCheckingSession} />
+      <Navigation
+        currentUser={currentUser} setCurrentUser={setCurrentUser}
+        activeView={activeView} setActiveView={setActiveView}
+      />
+      <div className="content">
+        {activeView === 'chat' ? (
+          <ChatWindow currentUser={currentUser} isCheckingSession={isCheckingSession} />
+        ) : (
+          <FilesWindow />
+        )}
+      </div>
     </div>
   )
 }

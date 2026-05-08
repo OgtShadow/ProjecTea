@@ -24,6 +24,11 @@
         cursor: pointer;
 }
 
+.nav-button.active {
+    background: #1b4cff10;
+    font-weight: 600;
+}
+
 .nav-login {
     display: flex;
     flex-direction: column;
