@@ -2,10 +2,11 @@ import { useEffect, useState } from 'react'
 import Navigation from './Components/navigation/navigation'
 import ChatWindow from './Components/chatWindow/chatWindow'
 import FilesWindow from './Components/filesWindow/filesWindow.tsx'
+import KanbanWindow from './Components/kanbanWindow/kanbanWindow'
 import './App.css'
 import apiFetch from './api'
 
-type ActiveView = 'chat' | 'files'
+type ActiveView = 'chat' | 'files' | 'kanban'
 
 function App() {
   const [currentUser, setCurrentUser] = useState<string | null>(null)
@@ -36,8 +37,10 @@ function App() {
       <div className="content">
         {activeView === 'chat' ? (
           <ChatWindow currentUser={currentUser} isCheckingSession={isCheckingSession} />
-        ) : (
+        ) : activeView === 'files' ? (
           <FilesWindow />
+        ) : (
+          <KanbanWindow />
         )}
       </div>
     </div>
