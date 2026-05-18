@@ -97,6 +97,7 @@
 - [ ] Napisać podstawowe testy jednostkowe i E2E.
 - [ ] Dodać CI workflow (lint→test→build).
 
+
 ---
 
 Plik zaktualizowany: [ProjecTea/ToDo.md](ProjecTea/ToDo.md)
