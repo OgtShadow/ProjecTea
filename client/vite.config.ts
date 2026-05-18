@@ -45,6 +45,11 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,
       },
+      '/api/kanban': {
+        target: 'http://go-backend:8081',
+        changeOrigin: true,
+        secure: false,
+      },
       '/api': {
         target: 'https://java-backend:8082',
         changeOrigin: true,
