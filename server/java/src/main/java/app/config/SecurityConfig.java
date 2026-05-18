@@ -40,7 +40,8 @@ public class SecurityConfig {
                     .requestMatchers("/status").permitAll()
                     .requestMatchers("/api/auth/login").permitAll()
                     .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                    .requestMatchers("/actuator/**").permitAll()
+                        .requestMatchers("/actuator/**").permitAll()
+                        .requestMatchers("/diagnostics", "/diagnostics/**").permitAll()
                     .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex.authenticationEntryPoint((request, response, authException) ->
