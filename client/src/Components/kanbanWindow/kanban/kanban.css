@@ -1,19 +1,26 @@
 .kanban-root {
 	display: flex;
+	flex-direction: column;
 	gap: 1rem;
+	width: 100%;
 }
-.kanban-create { display:flex; gap:8px; margin-bottom:12px; align-items:center }
+.kanban-create { display:flex; gap:8px; margin-bottom:12px; align-items:center; flex-wrap:wrap; width: 100% }
+.kanban-create > input, .kanban-create > select { flex: 1 1 200px }
+.kanban-create > button { flex: 0 0 auto }
 .kanban-create input, .kanban-create select { padding:6px 8px; border-radius:4px; border:1px solid #ddd }
 .kanban-create button { padding:6px 10px; border-radius:4px; background:#2978f2; color:white; border:none }
 .kanban-columns {
 	display: flex;
 	gap: 1rem;
+	width: 100%;
 }
 .kanban-column {
-	background: #f7f7f7;
+	background: #f3f3f3;
 	padding: 8px;
-	width: 240px;
+	flex: 1 1 240px;
+	min-width: 200px;
 	border-radius: 4px;
+    height: 700px;
 }
 .kanban-column-header {
 	font-weight: bold;
