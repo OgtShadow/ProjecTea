@@ -1,0 +1,22 @@
+meta {
+  name: Auth me (check current user)
+  type: http
+  seq: 2
+}
+
+get {
+  url: https://localhost/api/auth/me
+  body: none
+  auth: none
+}
+
+tests {
+  test("Auth me returns 200 when authenticated", async function () {
+    expect(res.status).to.equal(200);
+  });
+  
+  test("Auth me returns name when authenticated", async function () {
+    expect(res.body.username).to.equal("bruno-tester");
+  });
+  
+}

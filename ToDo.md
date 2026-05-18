@@ -90,13 +90,19 @@
 - [✅] Implementować JWT + sesje (Spring Security).
 - [✅] Zdefiniować i wdrożyć Swagger/OpenAPI dla głównych endpointów.
 - [✅] Podstawić prosty kanał WebSocket i przetestować komunikację z React.
-- [ ] MVP czat: wysyłanie/odbieranie tekstu + proste UI.
-- [ ] Dodawanie plików/zdjęć — backend storage + frontend upload.
+- [✅] MVP czat: wysyłanie/odbieranie tekstu + proste UI.
+- [✅] Dodawanie plików/zdjęć — backend storage + frontend upload.
+- [ ] Zrobienie Actuatora
+- [ ] Popraw logowanie na Spring Security (ma być osobna baza logowaniowa)
+- [ ] Dodaj wizualną reprezentację danych
+- [ ] lista plików na modłę notion
+- [ ] system logowania
+- [ ] testy wydajnościowe API
+- [ ] testowy prosty serwis wykorzystujący gRPC/MQTT itp.
 - [ ] MVP Kanban: CRUD zadań + przypisywanie.
 - [ ] Kalendarz: tworzenie wydarzeń i integracja z Kanban.
 - [ ] Napisać podstawowe testy jednostkowe i E2E.
 - [ ] Dodać CI workflow (lint→test→build).
-
 
 ---
 

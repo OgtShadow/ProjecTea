@@ -5,6 +5,7 @@
   max-height: 100vh;
   padding: 16px;
   box-sizing: border-box;
+  width: 100%;
 }
 
 .chat-window > h2 {

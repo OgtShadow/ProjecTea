@@ -3,8 +3,9 @@ import './chatWindow.css'
 import SockJS from 'sockjs-client'
 import { Client } from '@stomp/stompjs'
 import type { Frame, IMessage } from '@stomp/stompjs'
-import MessageSender from '../messageSender/messageSender'
-import Chat from '../chat/chat'
+import MessageSender from './messageSender/messageSender'
+import Chat from './chat/chat'
+import apiFetch from '../../api'
 
 interface Message {
   id?: number
@@ -12,32 +13,16 @@ interface Message {
   text: string
 }
 
-interface AuthUserResponse {
-  username: string
-}
-
 const BACKEND_URL = ''
 
-async function apiFetch(path: string, init?: RequestInit): Promise<Response> {
-  const headers = new Headers(init?.headers)
-  if (init?.body && !headers.has('Content-Type')) {
-    headers.set('Content-Type', 'application/json')
-  }
-
-  return fetch(`${BACKEND_URL}${path}`, {
-    ...init,
-    headers,
-    credentials: 'include',
-  })
+interface Props {
+  currentUser: string | null
+  isCheckingSession: boolean
 }
 
-function ChatWindow() {
+function ChatWindow({ currentUser, isCheckingSession }: Props) {
   const [wsConnected, setWsConnected] = useState(false)
   const [messages, setMessages] = useState<Message[]>([])
-  const [currentUser, setCurrentUser] = useState<string | null>(null)
-  const [usernameInput, setUsernameInput] = useState('')
-  const [authError, setAuthError] = useState('')
-  const [isCheckingSession, setIsCheckingSession] = useState(true)
 
   const stompClient = useMemo(() => {
     const client = new Client({
@@ -74,29 +59,12 @@ function ChatWindow() {
     })
 
     return client
-  }, [currentUser])
-
-  useEffect(() => {
-    apiFetch('/api/auth/me')
-      .then(async (response) => {
-        if (!response.ok) {
-          throw new Error('No active session')
-        }
-
-        const me = (await response.json()) as AuthUserResponse
-        setCurrentUser(me.username)
-      })
-      .catch(() => {
-        setCurrentUser(null)
-      })
-      .finally(() => {
-        setIsCheckingSession(false)
-      })
   }, [])
+
+  // Session check happens in App; ChatWindow receives currentUser prop.
 
   useEffect(() => {
     if (!currentUser) {
-      setWsConnected(false)
       if (stompClient.active) {
         stompClient.deactivate()
       }
@@ -120,35 +88,7 @@ function ChatWindow() {
     }
   }, [currentUser, stompClient])
 
-  const login = async () => {
-    const trimmed = usernameInput.trim()
-    if (trimmed.length < 2) {
-      setAuthError('Username must have at least 2 characters.')
-      return
-    }
-
-    setAuthError('')
-    const response = await apiFetch('/api/auth/login', {
-      method: 'POST',
-      body: JSON.stringify({ username: trimmed }),
-    })
-
-    if (!response.ok) {
-      setAuthError('Login failed.')
-      return
-    }
-
-    const payload = (await response.json()) as AuthUserResponse
-    setCurrentUser(payload.username)
-    setUsernameInput('')
-  }
-
-  const logout = async () => {
-    await apiFetch('/api/auth/logout', { method: 'POST' })
-    setCurrentUser(null)
-    setWsConnected(false)
-    setMessages([])
-  }
+  // Login/logout handled by Navigation/Login component; ChatWindow reacts to currentUser prop.
 
   const sendWsMessage = (text: string) => {
     if (!text.trim()) return
@@ -169,43 +109,9 @@ function ChatWindow() {
 
   return (
     <div className="chat-window">
-      <div className='session-bar'>
-        {currentUser ? (
-          <>
-            <div className='session-state'>User: {currentUser}</div>
-            <button onClick={logout} className='session-button'>Logout</button>
-          </>
-        ) : (
-          <>
-            <input
-              type='text'
-              className='session-input'
-              value={usernameInput}
-              onChange={(e) => setUsernameInput(e.target.value)}
-              placeholder='Username'
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  login().catch(console.error)
-                }
-              }}
-            />
-            <button
-              onClick={() => {
-                login().catch(console.error)
-              }}
-              className='session-button'
-            >
-              Login
-            </button>
-          </>
-        )}
-      </div>
-
-      {authError && <div className='session-error'>{authError}</div>}
-
-      <h2>Chat Window Status: {wsConnected ? 'connected' : 'disconnected'}</h2>
+      <h2>Chat Window Status: {currentUser && wsConnected ? 'connected' : 'disconnected'}</h2>
       <div className="chat-messages">
-        <Chat messages={messages} />
+        <Chat messages={currentUser ? messages : []} />
       </div>
       <div className="chat-sender">
         <MessageSender

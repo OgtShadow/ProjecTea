@@ -1,11 +1,11 @@
 meta {
-  name: Java Server life status
+  name: Go Api life status
   type: http
   seq: 1
 }
 
 get {
-  url: https://localhost:8082/status
+  url: http://localhost:8081/health
   body: none
   auth: none
 }
@@ -13,8 +13,7 @@ get {
 tests {
   test("Server is on", async function () {
     expect(res.status).to.equal(200);
-  
-    const msg = (res.getBody() || "").trim();
-    expect(msg).to.equal("Server On");
+    expect(res.body.status).to.equal("healthy");
   });
+  
 }

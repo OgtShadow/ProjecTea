@@ -1,0 +1,22 @@
+meta {
+  name: Untitled
+  type: http
+  seq: 1
+}
+
+post {
+  url: https://localhost/api/auth/logout
+  body: none
+  auth: inherit
+}
+
+tests {
+  test("Logout returns 401 || 204", async function () {
+    expect(res.status).to.be.oneOf([401, 204]);
+  });
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

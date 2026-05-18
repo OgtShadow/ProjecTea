@@ -1,0 +1,26 @@
+meta {
+  name: Get files
+  type: http
+  seq: 2
+}
+
+get {
+  url: http://localhost:8081/api/files
+  body: none
+  auth: inherit
+}
+
+tests {
+  test("get files returns 200",async function () {
+    expect (res.status).to.equal(200)
+  })
+  
+  test("get files returns json",async function () {
+    expect(res.getHeader('content-type')).to.include("application/json");
+  })
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

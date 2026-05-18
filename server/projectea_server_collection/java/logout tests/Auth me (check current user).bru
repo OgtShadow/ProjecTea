@@ -1,0 +1,17 @@
+meta {
+  name: Auth me (check current user)
+  type: http
+  seq: 4
+}
+
+get {
+  url: https://localhost/api/auth/me
+  body: none
+  auth: none
+}
+
+tests {
+  test("Auth me returns 401 when NOT authenticated", async function () {
+    expect(res.status).to.equal(401);
+  });
+}

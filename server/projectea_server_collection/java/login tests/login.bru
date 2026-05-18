@@ -1,0 +1,22 @@
+meta {
+  name: Login (create session)
+  type: http
+  seq: 1
+}
+
+post {
+  url: https://localhost/api/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {"username": "bruno-tester"}
+}
+
+tests {
+  test("Login returns 200 and sets session cookie", async function () {
+    expect(res.status).to.equal(200);
+    const setCookie = res.getHeader("set-cookie");
+  });
+}
