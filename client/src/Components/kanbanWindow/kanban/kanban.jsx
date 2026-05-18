@@ -5,10 +5,11 @@ const COLUMNS = [
   { key: 'todo', title: 'Do zrobienia' },
   { key: 'inprogress', title: 'W trakcie' },
   { key: 'done', title: 'Zrobione' },
+  { key: 'trash', title: 'Kosz' },
 ]
 
 function Kanban() {
-  const [board, setBoard] = useState({ columns: { todo: [], inprogress: [], done: [] } })
+  const [board, setBoard] = useState({ columns: { todo: [], inprogress: [], done: [], trash: [] } })
   const [newTitle, setNewTitle] = useState('')
   const [newDesc, setNewDesc] = useState('')
   const [newColumn, setNewColumn] = useState('todo')
@@ -16,14 +17,18 @@ function Kanban() {
     todo: useRef(null),
     inprogress: useRef(null),
     done: useRef(null),
+    trash: useRef(null),
   }
   const draggedRef = useRef(null)
 
   useEffect(() => {
-    // fetch initial board
+    // fetch initial board and ensure 'trash' column exists
     fetch('/api/kanban')
       .then((r) => r.json())
-      .then((data) => setBoard(data))
+      .then((data) => {
+        const cols = (data && data.columns) ? data.columns : {}
+        setBoard({ columns: { todo: cols.todo || [], inprogress: cols.inprogress || [], done: cols.done || [], trash: cols.trash || [] } })
+      })
       .catch((e) => console.error('kanban fetch error', e))
   }, [])
 
@@ -50,9 +55,32 @@ function Kanban() {
     const taskId = String(dragged.taskId)
     const from = dragged.fromColumn
     if (!taskId) return
+    // if dropped into trash -> delete
+    if (toColumn === 'trash') {
+      setBoard((prev) => {
+        const next = { columns: { todo: [...prev.columns.todo], inprogress: [...prev.columns.inprogress], done: [...prev.columns.done], trash: [...prev.columns.trash] } }
+        const src = next.columns[from]
+        const removeIdx = src.findIndex((t) => String(t.id) === taskId)
+        if (removeIdx !== -1) {
+          src.splice(removeIdx, 1)
+        }
+        return next
+      })
+
+      // attempt to delete on backend
+      fetch(`/api/kanban/tasks/${taskId}`, { method: 'DELETE' })
+        .then((res) => {
+          if (!res.ok) console.warn('backend delete responded', res.status)
+        })
+        .catch((e) => console.error('kanban delete error', e))
+
+      draggedRef.current = null
+      return
+    }
+
     // update state: remove from source and append to target
     setBoard((prev) => {
-      const next = { columns: { todo: [...prev.columns.todo], inprogress: [...prev.columns.inprogress], done: [...prev.columns.done] } }
+      const next = { columns: { todo: [...prev.columns.todo], inprogress: [...prev.columns.inprogress], done: [...prev.columns.done], trash: [...prev.columns.trash] } }
       const src = next.columns[from]
       const removeIdx = src.findIndex((t) => String(t.id) === taskId)
       let moved = null
@@ -80,7 +108,7 @@ function Kanban() {
         <input value={newTitle} onChange={e => setNewTitle(e.target.value)} placeholder="Tytuł zadania" />
         <input value={newDesc} onChange={e => setNewDesc(e.target.value)} placeholder="Opis (opcjonalnie)" />
         <select value={newColumn} onChange={e => setNewColumn(e.target.value)}>
-          {COLUMNS.map(c => <option key={c.key} value={c.key}>{c.title}</option>)}
+          {COLUMNS.filter(c => c.key !== 'trash').map(c => <option key={c.key} value={c.key}>{c.title}</option>)}
         </select>
         <button onClick={async () => {
           if (!newTitle.trim()) return
@@ -105,7 +133,7 @@ function Kanban() {
       </div>
       <div className="kanban-columns">
         {COLUMNS.map((col) => (
-          <div className="kanban-column" key={col.key}>
+          <div className={`kanban-column ${col.key === 'trash' ? 'trash' : ''}`} key={col.key}>
             <div className="kanban-column-header">{col.title}</div>
             <div className="kanban-column-list" data-column={col.key} ref={refs[col.key]} onDragOver={onDragOverColumn} onDrop={(e) => onDropToColumn(e, col.key)}>
               {(board.columns[col.key] || []).map((task, idx) => (

@@ -33,3 +33,8 @@
 .kanban-card-title { font-weight: 600 }
 .kanban-card-desc { font-size: 0.9em; color: #555 }
 .kanban-ghost { opacity: 0.6; transform: scale(0.98); box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
+.kanban-column.trash {
+	background: #fff5f5;
+	border: 1px dashed #ffb3b3;
+}
+.kanban-column.trash .kanban-column-header { color: #a80000 }
