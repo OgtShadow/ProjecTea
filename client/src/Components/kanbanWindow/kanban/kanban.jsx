@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react'
-import Sortable from 'https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/modular/sortable.esm.js'
 import './kanban.css'
 
 const COLUMNS = [
@@ -18,6 +17,7 @@ function Kanban() {
     inprogress: useRef(null),
     done: useRef(null),
   }
+  const draggedRef = useRef(null)
 
   useEffect(() => {
     // fetch initial board
@@ -27,51 +27,52 @@ function Kanban() {
       .catch((e) => console.error('kanban fetch error', e))
   }, [])
 
-  useEffect(() => {
-    // init Sortable for each column
-    const sortables = []
-    COLUMNS.forEach((col) => {
-      const el = refs[col.key].current
-      if (!el) return
-      const s = Sortable.create(el, {
-        group: 'kanban',
-        animation: 150,
-        onEnd: (evt) => {
-          const itemEl = evt.item
-          const taskId = itemEl.dataset.id
-          const from = evt.from.dataset.column
-          const to = evt.to.dataset.column
-          const toIndex = evt.newIndex
-          // optimistic update
-          setBoard((prev) => {
-            const next = { columns: { todo: [...prev.columns.todo], inprogress: [...prev.columns.inprogress], done: [...prev.columns.done] } }
-            // remove from source
-            const src = next.columns[from]
-            const removeIdx = src.findIndex((t) => t.id === taskId)
-            if (removeIdx !== -1) {
-              const [moved] = src.splice(removeIdx, 1)
-              const dst = next.columns[to]
-              const idx = Math.min(Math.max(0, toIndex), dst.length)
-              dst.splice(idx, 0, moved)
-            }
-            return next
-          })
+  // HTML5 drag-and-drop handlers (replaces Sortable to avoid DOM/React conflicts)
+  const onDragStart = (e, task, fromColumn, index) => {
+    try {
+      draggedRef.current = { taskId: String(task.id), fromColumn, index }
+      e.dataTransfer.setData('text/plain', String(task.id))
+      e.dataTransfer.effectAllowed = 'move'
+    } catch (err) {
+      console.error('dragstart error', err)
+    }
+  }
 
-          // send to backend
-          fetch('/api/kanban/move', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ taskId, fromColumn: from, toColumn: to, toIndex }),
-          }).catch((e) => console.error('kanban move error', e))
-        },
-      })
-      sortables.push(s)
+  const onDragOverColumn = (e) => {
+    e.preventDefault()
+    e.dataTransfer.dropEffect = 'move'
+  }
+
+  const onDropToColumn = (e, toColumn) => {
+    e.preventDefault()
+    const data = e.dataTransfer.getData('text/plain')
+    const dragged = draggedRef.current || { taskId: data }
+    const taskId = String(dragged.taskId)
+    const from = dragged.fromColumn
+    if (!taskId) return
+    // update state: remove from source and append to target
+    setBoard((prev) => {
+      const next = { columns: { todo: [...prev.columns.todo], inprogress: [...prev.columns.inprogress], done: [...prev.columns.done] } }
+      const src = next.columns[from]
+      const removeIdx = src.findIndex((t) => String(t.id) === taskId)
+      let moved = null
+      if (removeIdx !== -1) {
+        ;[moved] = src.splice(removeIdx, 1)
+      } else {
+        // if not found, nothing to move
+        return prev
+      }
+      next.columns[toColumn].push(moved)
+      return next
     })
 
-    return () => {
-      sortables.forEach((s) => s.destroy && s.destroy())
-    }
-  }, [board])
+    // notify backend (append to end)
+    fetch('/api/kanban/move', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ taskId, fromColumn: from, toColumn, toIndex: -1 })
+    }).catch((e) => console.error('kanban move error', e))
+    draggedRef.current = null
+  }
 
   return (
     <div className="kanban-root">
@@ -106,9 +107,9 @@ function Kanban() {
         {COLUMNS.map((col) => (
           <div className="kanban-column" key={col.key}>
             <div className="kanban-column-header">{col.title}</div>
-            <div className="kanban-column-list" data-column={col.key} ref={refs[col.key]}>
-              {(board.columns[col.key] || []).map((task) => (
-                <div key={task.id} className="kanban-card" data-id={task.id}>
+            <div className="kanban-column-list" data-column={col.key} ref={refs[col.key]} onDragOver={onDragOverColumn} onDrop={(e) => onDropToColumn(e, col.key)}>
+              {(board.columns[col.key] || []).map((task, idx) => (
+                <div key={task.id} className="kanban-card" data-id={task.id} draggable onDragStart={(e) => onDragStart(e, task, col.key, idx)}>
                   <div className="kanban-card-title">{task.title}</div>
                   {task.description ? <div className="kanban-card-desc">{task.description}</div> : null}
                 </div>
