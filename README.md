@@ -174,6 +174,19 @@ Nginx korzysta z:
 
 Sluza tylko do lokalnego developmentu.
 
+## Testy wydajnosciowe (JMeter)
+
+W repo znajduje sie gotowy scenariusz testu wydajnosciowego dla aplikacji JMeter: [server/jmeter/README_JMeter.md](server/jmeter/README_JMeter.md).
+
+Krotka instrukcja uruchomienia:
+
+1. Uruchom stack aplikacji, np. `docker compose -f docker-compose.dev.yml up --build` albo przynajmniej `docker compose -f docker-compose.dev.yml start`.
+2. Otworz katalog `server/jmeter` i uruchom skrypt `run_with_truststore.ps1`, ktory importuje certyfikat i odpala JMeter z truststore.
+3. Scenariusz wykonuje logowanie do `/api/auth/login`, pobiera dane z `/api/auth/me` i generuje raport HTML.
+4. Wyniki testu pojawiaja sie w `server/jmeter/report/index.html`.
+
+Jesli chcesz wykonac test recznie w trybie non-GUI, szczegoly uruchomienia i dokumentacja screenshotow sa opisane w [server/jmeter/README_JMeter.md](server/jmeter/README_JMeter.md).
+
 ## Przydatne komendy
 
 ```bash
