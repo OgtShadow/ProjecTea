@@ -108,3 +108,36 @@ logowanie na użytkowników na osobnych bazach
 ---
 
 Plik zaktualizowany: [ProjecTea/ToDo.md](ProjecTea/ToDo.md)
+
+PAW checklist:
+
+- ✅ dokumentacja API w Swaggerze
+- działająca baza danych z kluczowymi elementami (tabelami, kolekcjami);
+- ✅ implementacja szkieletu aplikacji i podstawowych endpointów API (dowolna technologia)
+- ✅ umożliwienie demonstracji tworzenia, odczytywania, modyfikowania i usuwania danych (CRUD) za pośrednictwem REST API
+- ✅ przygotowanie skryptów inicjalizujacych bazę danych
+- ✅ podstawowe testy jednostkowe i/lub REST API
+- ✅ aktywne wykorzystywanie VCS (np. git), zdalne repozytorium do wglądu
+- ✅ implementacja uwierzytelniania i autoryzacji użytkowników (JWT)
+- ✅ realizacja aplikacji w języku Go (obowiązkowo)
+- deploy na Google App Engine (lub podobne)
+- ✅ pełne testy API (Swagger/Postman)
+- ✅ skorzystanie z Dockera (np. do bazy danych)
+- ✅ wykorzystanie komunikacji opartej na WebSockets
+- implementacja mechanizmu statysk/logów wykorzystania API 
+- ✅ upload/download plików
+- ✅ dostęp do API przez HTTPS
+- ✅ testy wydajnościowe API
+- testowy prosty serwis wykorzystujący gRPC/MQTT itp.
+
+TSS checklist:
+
+- ✅ Architektura MVC – komponenty aplikacji kontrolery, serwisy, widoki, logika itd. Historia tworzenia projektu w Git.
+- Budowa stron JSP/Thymeleaf (użycie elementów dedykowanych wybranej technologii) – tworzenie tabel, formatowanie , SpringSecurity w widokach itp.
+- ✅ Mechanizmy sesji – wykorzystanie mechanizmów sesji do zapisu/odczytu danych aplikacji i zastosowanie ich w logice aplikacji
+- Konfiguracja podstawowych mechanizmów Spring Security (uprawnienia, logowanie, role) – pojedyncza baza / osobna dodatkowa baza z danymi autoryzacyjnymi
+- Modyfikacja danych w bazie (CRUD) za pomocą ORM, prezentacja danych (tabele w widokach aplikacji) i własna baza / dostęp do danych przez komponent serwisowy / TO
+- ✅ Odczyt zmiennych środowiskowych, danych projektu i prezentacja w widokach ( Actuator )
+- ✅ Bezpieczeństwo transmisji – konfiguracja i wykorzystanie HTTS, własny certyfikat
+- ✅ Usługa RESTful - przykład przesyłania i prezentacji danych w formacie JSON – implementacja części serwerowej – dane w kodzie / dane z bazy – przez komponent serwisowy / TO
+- WebSocket – przykład przesyłania i graficzna (dynamiczna) prezentacji danych – implementacja części serwerowej i klienckiej JS, dane w kodzie / dane z bazy – przez komponent serwisowy
