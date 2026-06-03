@@ -1,11 +1,16 @@
 package kanban
 
 import (
+    "context"
     "encoding/json"
     "fmt"
     "net/http"
+    "os"
     "sync"
     "time"
+
+    pb "github.com/projecTea/grpcmqtt/pb"
+    "google.golang.org/grpc"
 )
 
 // Simple in-memory Kanban
@@ -20,17 +25,36 @@ type KanbanBoard struct {
 }
 
 type KanbanService struct {
-    mu    sync.Mutex
-    board KanbanBoard
+    mu         sync.Mutex
+    board      KanbanBoard
+    grpcClient pb.MessageServiceClient
+    topic      string
 }
 
+// NewKanbanService creates service and connects to MQTT broker (if configured)
 func NewKanbanService() *KanbanService {
     b := KanbanBoard{Columns: map[string][]Task{
         "todo":       {{ID: fmt.Sprintf("%d", time.Now().UnixNano()), Title: "Przykładowe zadanie 1"}},
         "inprogress": {{ID: fmt.Sprintf("%d", time.Now().UnixNano()+1), Title: "Przykładowe zadanie 2"}},
         "done":       {},
     }}
-    return &KanbanService{board: b}
+
+    ks := &KanbanService{board: b, topic: "kanban/updates"}
+
+    // connect to grpcmqtt service
+    grpcAddr := os.Getenv("KANBAN_GRPC_ADDR")
+    if grpcAddr == "" {
+        grpcAddr = "grpcmqtt:50051"
+    }
+    // try connect with short timeout (non-fatal)
+    ctx, cancel := context.WithTimeout(context.Background(), 500*time.Millisecond)
+    defer cancel()
+    conn, err := grpc.DialContext(ctx, grpcAddr, grpc.WithInsecure(), grpc.WithBlock())
+    if err == nil {
+        ks.grpcClient = pb.NewMessageServiceClient(conn)
+    }
+
+    return ks
 }
 
 // GET /api/kanban
@@ -57,7 +81,6 @@ func (ks *KanbanService) CreateTask(w http.ResponseWriter, r *http.Request) {
         return
     }
     ks.mu.Lock()
-    defer ks.mu.Unlock()
     id := fmt.Sprintf("%d", time.Now().UnixNano())
     task := Task{ID: id, Title: payload.Title, Description: payload.Description}
     col := payload.Column
@@ -65,6 +88,12 @@ func (ks *KanbanService) CreateTask(w http.ResponseWriter, r *http.Request) {
         col = "todo"
     }
     ks.board.Columns[col] = append(ks.board.Columns[col], task)
+    boardCopy := ks.board
+    ks.mu.Unlock()
+
+    // publish update event via gRPC Send
+    go ks.sendGRPCEvent("kanban/updates", boardCopy)
+
     w.Header().Set("Content-Type", "application/json")
     _ = json.NewEncoder(w).Encode(task)
 }
@@ -82,7 +111,6 @@ func (ks *KanbanService) MoveTask(w http.ResponseWriter, r *http.Request) {
         return
     }
     ks.mu.Lock()
-    defer ks.mu.Unlock()
 
     from := payload.FromColumn
     to := payload.ToColumn
@@ -99,6 +127,7 @@ func (ks *KanbanService) MoveTask(w http.ResponseWriter, r *http.Request) {
         }
     }
     if !found {
+        ks.mu.Unlock()
         http.Error(w, "task not found in fromColumn", http.StatusBadRequest)
         return
     }
@@ -109,7 +138,24 @@ func (ks *KanbanService) MoveTask(w http.ResponseWriter, r *http.Request) {
     }
     newDst := append(dst[:idx], append([]Task{moved}, dst[idx:]...)...)
     ks.board.Columns[to] = newDst
+    boardCopy := ks.board
+    ks.mu.Unlock()
+
+    // publish move event via gRPC Send
+    go ks.sendGRPCEvent("kanban/updates", boardCopy)
 
     w.Header().Set("Content-Type", "application/json")
     _ = json.NewEncoder(w).Encode(map[string]any{"success": true})
 }
+
+func (ks *KanbanService) sendGRPCEvent(topic string, board KanbanBoard) {
+    if ks.grpcClient == nil {
+        return
+    }
+    ev := map[string]any{"board": board}
+    b, _ := json.Marshal(ev)
+    ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+    defer cancel()
+    _, _ = ks.grpcClient.Send(ctx, &pb.Message{Topic: topic, Payload: string(b)})
+}
+
