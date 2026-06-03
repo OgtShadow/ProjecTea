@@ -1,0 +1,22 @@
+syntax = "proto3";
+package grpcmqtt;
+
+option go_package = "github.com/projecTea/grpcmqtt/pb";
+
+message Message {
+  string topic = 1;
+  string payload = 2;
+}
+
+message Ack {
+  bool ok = 1;
+}
+
+message SubscribeRequest {
+  string topic = 1;
+}
+
+service MessageService {
+  rpc Send(Message) returns (Ack);
+  rpc Subscribe(SubscribeRequest) returns (stream Message);
+}
