@@ -1,6 +1,54 @@
 import React, { useEffect, useState } from 'react'
 import './notifications.css'
 
+function formatNotification(notification) {
+  const directType = notification?.type || notification?.Type || 'notification'
+  const directPayload = notification?.payload || notification?.Payload || {}
+
+  const wrappedType = directType === 'notifications' ? directPayload?.type : directType
+  const wrappedPayload = directType === 'notifications' ? directPayload?.payload || {} : directPayload
+
+  const type = wrappedType || 'notification'
+  const payload = wrappedPayload || {}
+
+  if (type === 'kanban.move') {
+    const taskTitle = payload?.task?.title || 'zadanie'
+    const from = payload?.from || 'unknown'
+    const to = payload?.to || 'unknown'
+    return {
+      title: 'Kanban: przeniesiono zadanie',
+      subtitle: `${taskTitle} z ${from} do ${to}`,
+      type,
+    }
+  }
+
+  if (type === 'kanban.create') {
+    const taskTitle = payload?.task?.title || 'zadanie'
+    const column = payload?.column || 'todo'
+    return {
+      title: 'Kanban: utworzono zadanie',
+      subtitle: `${taskTitle} w kolumnie ${column}`,
+      type,
+    }
+  }
+
+  if (type === 'chat.message') {
+    const from = notification?.from || payload?.from || 'unknown'
+    const text = notification?.text || payload?.text || ''
+    return {
+      title: 'Chat: nowa wiadomość',
+      subtitle: `${from}: ${text}`,
+      type,
+    }
+  }
+
+  return {
+    title: type,
+    subtitle: typeof payload === 'string' ? payload : JSON.stringify(payload),
+    type,
+  }
+}
+
 export default function Notifications() {
   const [messages, setMessages] = useState([])
   const [status, setStatus] = useState('connecting')
@@ -49,8 +97,16 @@ export default function Notifications() {
       <div className="notifications-list">
         {messages.map((m, i) => (
           <div key={i} className="notification-item">
-            <div className="notification-topic">{m.topic || m.Topic || 'notif'}</div>
-            <div className="notification-payload">{typeof m.payload === 'string' ? m.payload : JSON.stringify(m.payload)}</div>
+            {(() => {
+              const view = formatNotification(m)
+              return (
+                <>
+                  <div className="notification-topic">{view.title}</div>
+                  <div className="notification-payload">{view.subtitle}</div>
+                  <div className="notification-meta">{view.type}</div>
+                </>
+              )
+            })()}
           </div>
         ))}
         {messages.length === 0 ? <div className="notification-empty">Brak powiadomień</div> : null}

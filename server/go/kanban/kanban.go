@@ -170,6 +170,5 @@ func (ks *KanbanService) sendGRPCEvent(topic string, board KanbanBoard) {
 }
 
 func notify(eventType string, payload any) error {
-	// send via local notifications package (which dials grpcmqtt)
-	return notifications.Notify("notifications", map[string]any{"type": eventType, "payload": payload})
+	return notifications.Notify(eventType, payload)
 }

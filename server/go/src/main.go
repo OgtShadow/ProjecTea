@@ -47,7 +47,7 @@ func main() {
 			http.Error(w, "invalid json", http.StatusBadRequest)
 			return
 		}
-		_ = notifications.Notify("notifications", map[string]any{"type": "chat.message", "from": payload.From, "text": payload.Text})
+		_ = notifications.Notify("chat.message", map[string]any{"from": payload.From, "text": payload.Text})
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("ok"))
 	}).Methods(http.MethodPost)
