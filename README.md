@@ -153,7 +153,8 @@ Szczegolowa dokumentacja: [server/go/README.md](server/go/README.md)
 
 ### Swagger / OpenAPI
 
-- Swagger UI: `https://localhost:8082/swagger-ui/index.html`
+- Swagger UI Java: `https://localhost:8082/swagger-ui/index.html`
+- Swagger UI Go: `http://localhost:8081/swagger/`
 - OpenAPI JSON: `https://localhost:8082/v3/api-docs`
 
 ## Walidacja requestow (POST /api/messages)
