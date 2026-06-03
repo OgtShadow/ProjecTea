@@ -10,6 +10,7 @@ W repozytorium znajduje się backend Go, ale obecnie jest szkieletem gotowym do 
 - WebSocket: STOMP + SockJS (`/ws`, `/app/send`, `/topic/messages`)
 - Dokumentacja API: Springdoc OpenAPI + Swagger UI
 - Reverse proxy (dev): Nginx (`nginx/default.conf`)
+- Demo Go: serwis `grpcmqtt` jako most miedzy gRPC i MQTT oraz prosty klient testowy (`server/go/grpcmqtt`)
 
 ## Struktura repozytorium
 
@@ -18,10 +19,46 @@ W repozytorium znajduje się backend Go, ale obecnie jest szkieletem gotowym do 
 |-- client/                    # aplikacja frontendowa React
 |-- server/
 |   |-- java/                  # backend Spring Boot (REST + WebSocket + Swagger)
-|   `-- go/                    # backend Go (obecnie scaffold)
+|   `-- go/                    # backend Go + demo gRPC/MQTT
 |-- nginx/                     # konfiguracja reverse proxy dla trybu dev
 |-- docker-compose.yml         # prostszy stack (ffrontend + go + java)
 `-- docker-compose.dev.yml     # stack dev z nginx (HTTP/HTTPS)
+```
+
+## Demo Go (gRPC + MQTT)
+
+W `server/go/grpcmqtt` znajduje sie maly serwis demonstracyjny:
+
+- gRPC przyjmuje komunikaty `Send` i wystawia stream `Subscribe`
+- MQTT sluzy jako warstwa wymiany wiadomosci
+- Docker Compose uruchamia broker `mosquitto`, serwis `grpcmqtt` i klienta testowego
+
+Uruchomienie demo:
+
+```bash
+cd server/go/grpcmqtt
+docker compose up --build
+```
+
+Jesli chcesz tylko sprawdzic backend Go lokalnie:
+
+```bash
+cd server/go
+go build ./...
+```
+
+Jeśli nie chce się uruchomić wygeneruj ręcznie pb przy pomocy:
+```
+# ustaw ścieżkę do katalogu grpcmqtt — zmień jeśli repo jest w innej lokalizacji
+$proj = 'C:\Users\pszer\OneDrive\Dokumenty\repositories\ProjecTea\server\go\grpcmqtt'
+
+# uruchom tymczasowy kontener, zainstaluje protoc i pluginy, i wygeneruje pb/* w katalogu projektu
+docker run --rm -v "${proj}:/defs" -w /defs golang:1.20-alpine sh -c `
+  "apk add --no-cache protobuf bash git build-base && \
+   go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28.1 && \
+   go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2.0 && \
+   mkdir -p pb && \
+   protoc --proto_path=proto --go_out=paths=source_relative:./pb --go-grpc_out=paths=source_relative:./pb proto/messages.proto"
 ```
 
 ## Wymagania

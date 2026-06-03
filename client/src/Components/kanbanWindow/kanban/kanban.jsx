@@ -110,7 +110,7 @@ function Kanban() {
         <select value={newColumn} onChange={e => setNewColumn(e.target.value)}>
           {COLUMNS.filter(c => c.key !== 'trash').map(c => <option key={c.key} value={c.key}>{c.title}</option>)}
         </select>
-        <button onClick={async () => {
+            <button onClick={async () => {
           if (!newTitle.trim()) return
           try {
             const res = await fetch('/api/kanban/tasks', {
@@ -119,14 +119,12 @@ function Kanban() {
             })
             if (!res.ok) throw new Error('create failed')
             const task = await res.json()
-            setBoard(prev => ({
-              columns: {
-                todo: [...prev.columns.todo],
-                inprogress: [...prev.columns.inprogress],
-                done: [...prev.columns.done],
-                [newColumn]: [...prev.columns[newColumn], task]
-              }
-            }))
+                setBoard(prev => ({
+                  columns: {
+                    ...prev.columns,
+                    [newColumn]: [...(prev.columns[newColumn] || []), task]
+                  }
+                }))
             setNewTitle(''); setNewDesc('')
           } catch (e) { console.error('create task error', e) }
         }}>Dodaj</button>
