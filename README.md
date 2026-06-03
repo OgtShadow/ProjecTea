@@ -12,6 +12,19 @@ W repozytorium znajduje się backend Go, ale obecnie jest szkieletem gotowym do 
 - Reverse proxy (dev): Nginx (`nginx/default.conf`)
 - Demo Go: serwis `grpcmqtt` jako most miedzy gRPC i MQTT oraz prosty klient testowy (`server/go/grpcmqtt`)
 
+## ProjecTea
+
+ProjecTea to projekt czatu teamowego z frontendem React + Vite oraz backendem Java Spring Boot (REST + WebSocket STOMP).
+W repozytorium jest też backend Go używany jako scaffold oraz kilka demonstratorów (gRPC ↔ MQTT bridge).
+
+## Architektura
+
+- Frontend: React + Vite (`client`)
+- Backend główny: Spring Boot (`server/java`)
+- Backend Go: prosty serwis plików, Kanban i demo gRPC/MQTT (`server/go`)
+- MQTT broker: Mosquitto (w `docker-compose`)
+- Reverse proxy (dev): Nginx (`nginx/default.conf`)
+
 ## Struktura repozytorium
 
 ```text
@@ -21,17 +34,17 @@ W repozytorium znajduje się backend Go, ale obecnie jest szkieletem gotowym do 
 |   |-- java/                  # backend Spring Boot (REST + WebSocket + Swagger)
 |   `-- go/                    # backend Go + demo gRPC/MQTT
 |-- nginx/                     # konfiguracja reverse proxy dla trybu dev
-|-- docker-compose.yml         # prostszy stack (ffrontend + go + java)
+|-- docker-compose.yml         # prostszy stack (frontend + go + java)
 `-- docker-compose.dev.yml     # stack dev z nginx (HTTP/HTTPS)
 ```
 
 ## Demo Go (gRPC + MQTT)
 
-W `server/go/grpcmqtt` znajduje sie maly serwis demonstracyjny:
+W `server/go/grpcmqtt` znajduje się prosty most `grpcmqtt`:
 
-- gRPC przyjmuje komunikaty `Send` i wystawia stream `Subscribe`
-- MQTT sluzy jako warstwa wymiany wiadomosci
-- Docker Compose uruchamia broker `mosquitto`, serwis `grpcmqtt` i klienta testowego
+- gRPC: metoda `Send` oraz serwerowy stream `Subscribe`
+- MQTT: służy jako warstwa wymiany wiadomości
+- Docker Compose umożliwia szybkie uruchomienie `mosquitto` + `grpcmqtt` + przykładowego klienta
 
 Uruchomienie demo:
 
@@ -40,25 +53,43 @@ cd server/go/grpcmqtt
 docker compose up --build
 ```
 
-Jesli chcesz tylko sprawdzic backend Go lokalnie:
+Jeśli chcesz tylko sprawdzić backend Go lokalnie:
 
 ```bash
 cd server/go
 go build ./...
 ```
 
-Jeśli nie chce się uruchomić wygeneruj ręcznie pb przy pomocy:
-```
-# ustaw ścieżkę do katalogu grpcmqtt — zmień jeśli repo jest w innej lokalizacji
-$proj = 'C:\Users\pszer\OneDrive\Dokumenty\repositories\ProjecTea\server\go\grpcmqtt'
+Jeśli potrzebujesz wygenerować `pb` ręcznie (lokalnie), możesz wykorzystać tymczasowy kontener z `protoc` i pluginami. Przykład (dostosuj ścieżkę `proj`):
 
-# uruchom tymczasowy kontener, zainstaluje protoc i pluginy, i wygeneruje pb/* w katalogu projektu
-docker run --rm -v "${proj}:/defs" -w /defs golang:1.20-alpine sh -c `
-  "apk add --no-cache protobuf bash git build-base && \
-   go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28.1 && \
-   go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2.0 && \
-   mkdir -p pb && \
-   protoc --proto_path=proto --go_out=paths=source_relative:./pb --go-grpc_out=paths=source_relative:./pb proto/messages.proto"
+```bash
+proj='C:\Users\pszer\OneDrive\Dokumenty\repositories\ProjecTea\server\go\grpcmqtt'
+docker run --rm -v "${proj}:/defs" -w /defs golang:1.20-alpine sh -c "apk add --no-cache protobuf bash git build-base && go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28.1 && go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2.0 && mkdir -p pb && protoc --proto_path=proto --go_out=paths=source_relative:./pb --go-grpc_out=paths=source_relative:./pb proto/messages.proto"
+```
+
+## Powiadomienia (Notifications)
+
+W projekcie dodałem prosty system powiadomień. Powiadomienia są publikowane na MQTT topic `notifications` (przez serwis `grpcmqtt`). Na start wysyłamy:
+
+- powiadomienia o zmianach w Kanbanie (tworzenie/przenoszenie zadań)
+- powiadomienia o nowych wiadomościach na czacie (można wysłać do Go endpointu, który przekaże dalej)
+
+Jak odbierać powiadomienia:
+
+- Subskrybuj MQTT topic `notifications` (broker `mosquitto` w Docker Compose, domyślnie port 1883).
+
+Przykład (lokalnie, używając `mosquitto_sub`):
+
+```bash
+mosquitto_sub -h localhost -p 1883 -t notifications -v
+```
+
+Endpoint do zgłaszania nowej wiadomości czatu (możesz wywołać z backendu Java po wysłaniu wiadomości):
+
+```bash
+curl -X POST http://localhost:8081/api/notify/chat -H "Content-Type: application/json" -d '{"from":"Alice","text":"Cześć"}'
+```
+ 
 ```
 
 ## Wymagania

@@ -3,6 +3,7 @@ import Navigation from './Components/navigation/navigation'
 import ChatWindow from './Components/chatWindow/chatWindow'
 import FilesWindow from './Components/filesWindow/filesWindow.tsx'
 import KanbanWindow from './Components/kanbanWindow/kanbanWindow'
+import Notifications from './Components/notifications/notifications'
 import './App.css'
 import apiFetch from './api'
 
@@ -34,6 +35,7 @@ function App() {
         currentUser={currentUser} setCurrentUser={setCurrentUser}
         activeView={activeView} setActiveView={setActiveView}
       />
+      <Notifications />
       <div className="content">
         {activeView === 'chat' ? (
           <ChatWindow currentUser={currentUser} isCheckingSession={isCheckingSession} />

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import fs from 'fs'
@@ -13,7 +12,7 @@ const __dirname = path.dirname(__filename)
 const certPath = path.resolve(__dirname, './certs/localhost.pem')
 const keyPath = path.resolve(__dirname, './certs/localhost-key.pem')
 
-let httpsConfig: any = false
+let httpsConfig: false | { cert: Buffer; key: Buffer } = false
 try {
   if (fs.existsSync(certPath) && fs.existsSync(keyPath)) {
     httpsConfig = {
@@ -46,6 +45,16 @@ export default defineConfig({
         secure: false,
       },
       '/api/kanban': {
+        target: 'http://go-backend:8081',
+        changeOrigin: true,
+        secure: false,
+      },
+      '/api/notifications': {
+        target: 'http://go-backend:8081',
+        changeOrigin: true,
+        secure: false,
+      },
+      '/api/notify/chat': {
         target: 'http://go-backend:8081',
         changeOrigin: true,
         secure: false,

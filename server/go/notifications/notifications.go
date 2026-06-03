@@ -2,41 +2,65 @@ package notifications
 
 import (
 	"context"
-	"encoding/json"
-	"os"
+	"sync"
 	"time"
-
-	pb "github.com/projecTea/grpcmqtt/pb"
-	"google.golang.org/grpc"
 )
 
-var client pb.MessageServiceClient
-
-func init() {
-	grpcAddr := os.Getenv("GRPCMQTT_ADDR")
-	if grpcAddr == "" {
-		grpcAddr = "grpcmqtt:50051"
-	}
-	ctx, cancel := context.WithTimeout(context.Background(), 500*time.Millisecond)
-	defer cancel()
-	conn, err := grpc.DialContext(ctx, grpcAddr, grpc.WithInsecure(), grpc.WithBlock())
-	if err != nil {
-		return
-	}
-	client = pb.NewMessageServiceClient(conn)
+type Event struct {
+	Type      string    `json:"type"`
+	Payload   any       `json:"payload"`
+	Timestamp time.Time `json:"timestamp"`
 }
 
-// Notify sends a notification payload to the given topic via grpcmqtt bridge.
-func Notify(topic string, payload any) error {
-	if client == nil {
-		return nil
+var (
+	mu          sync.RWMutex
+	subscribers = map[chan Event]struct{}{}
+	buffer      = make(chan Event, 64)
+	oncePump    sync.Once
+)
+
+func init() {
+	oncePump.Do(func() {
+		go pump()
+	})
+}
+
+func pump() {
+	for event := range buffer {
+		mu.RLock()
+		for subscriber := range subscribers {
+			select {
+			case subscriber <- event:
+			default:
+			}
+		}
+		mu.RUnlock()
 	}
-	b, err := json.Marshal(payload)
-	if err != nil {
-		return err
+}
+
+func Notify(eventType string, payload any) error {
+	event := Event{Type: eventType, Payload: payload, Timestamp: time.Now().UTC()}
+	select {
+	case buffer <- event:
+	default:
+		// drop oldest style: if buffer is full, don't block request handlers
 	}
-	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
-	defer cancel()
-	_, err = client.Send(ctx, &pb.Message{Topic: topic, Payload: string(b)})
-	return err
+	return nil
+}
+
+func Subscribe(ctx context.Context) <-chan Event {
+	ch := make(chan Event, 16)
+	mu.Lock()
+	subscribers[ch] = struct{}{}
+	mu.Unlock()
+
+	go func() {
+		<-ctx.Done()
+		mu.Lock()
+		delete(subscribers, ch)
+		mu.Unlock()
+		close(ch)
+	}()
+
+	return ch
 }

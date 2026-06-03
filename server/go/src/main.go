@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"time"
 
 	_ "projecTea/docs"
 
@@ -58,6 +59,45 @@ func main() {
 		httpSwagger.DocExpansion("none"),
 		httpSwagger.DomID("swagger-ui"),
 	))
+
+	// Server-Sent Events endpoint for notifications (streams messages from grpcmqtt)
+	router.HandleFunc("/api/notifications/stream", func(w http.ResponseWriter, r *http.Request) {
+		flusher, ok := w.(http.Flusher)
+		if !ok {
+			http.Error(w, "streaming unsupported", http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "text/event-stream")
+		w.Header().Set("Cache-Control", "no-cache")
+		w.Header().Set("Connection", "keep-alive")
+
+		events := notifications.Subscribe(r.Context())
+		ticker := time.NewTicker(15 * time.Second)
+		defer ticker.Stop()
+
+		for {
+			select {
+			case <-r.Context().Done():
+				return
+			case event, ok := <-events:
+				if !ok {
+					return
+				}
+				b, _ := json.Marshal(event)
+				_, _ = w.Write([]byte("data: "))
+				_, _ = w.Write(b)
+				_, _ = w.Write([]byte("\n\n"))
+				flusher.Flush()
+			case <-ticker.C:
+				_, _ = w.Write([]byte(": keepalive\n\n"))
+				flusher.Flush()
+			default:
+				// avoid busy loop if neither event nor keepalive is ready
+				time.Sleep(100 * time.Millisecond)
+			}
+		}
+	}).Methods(http.MethodGet)
 
 	// Aplikuj CORS middleware
 	handler := api.CorsMiddleware(router)
