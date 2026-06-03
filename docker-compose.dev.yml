@@ -19,7 +19,7 @@ services:
     volumes:
       - ./server/go:/app
       - /app/pkg/mod
-    command: sh -c "go mod download && go run ./src/main.go"
+    command: sh -c "go mod download && go run ./src"
     ports:
       - "8081:8081"
 
