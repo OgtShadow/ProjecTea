@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 
@@ -9,6 +10,7 @@ import (
 	"projecTea/api"
 	"projecTea/files"
 	"projecTea/kanban"
+	"projecTea/notifications"
 
 	"github.com/gorilla/mux"
 	httpSwagger "github.com/swaggo/http-swagger"
@@ -33,6 +35,21 @@ func main() {
 	router.HandleFunc("/api/kanban", kanbanService.GetBoard).Methods(http.MethodGet)
 	router.HandleFunc("/api/kanban/tasks", kanbanService.CreateTask).Methods(http.MethodPost)
 	router.HandleFunc("/api/kanban/move", kanbanService.MoveTask).Methods(http.MethodPost)
+
+	// Chat notification webhook (called by chat backend when message sent)
+	router.HandleFunc("/api/notify/chat", func(w http.ResponseWriter, r *http.Request) {
+		var payload struct {
+			From string `json:"from"`
+			Text string `json:"text"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
+			http.Error(w, "invalid json", http.StatusBadRequest)
+			return
+		}
+		_ = notifications.Notify("notifications", map[string]any{"type": "chat.message", "from": payload.From, "text": payload.Text})
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("ok"))
+	}).Methods(http.MethodPost)
 
 	// Swagger UI
 	router.PathPrefix("/swagger/").Handler(httpSwagger.Handler(
