@@ -6,6 +6,10 @@ import (
 
 	_ "projecTea/docs"
 
+	"projecTea/api"
+	"projecTea/files"
+	"projecTea/kanban"
+
 	"github.com/gorilla/mux"
 	httpSwagger "github.com/swaggo/http-swagger"
 )
@@ -13,17 +17,17 @@ import (
 // main sets up services and routes
 func main() {
 	router := mux.NewRouter()
-	fileService := NewFileService(uploadDir)
+	fileService := files.NewFileService("./uploads")
 
 	// Kanban service (in-memory)
-	kanbanService := NewKanbanService()
+	kanbanService := kanban.NewKanbanService()
 
 	// API endpoints dla plików
 	router.HandleFunc("/api/files/upload", fileService.UploadFile).Methods(http.MethodPost)
 	router.HandleFunc("/api/files", fileService.ListFiles).Methods(http.MethodGet)
 	router.HandleFunc("/api/files/download/{fileId}", fileService.DownloadFile).Methods(http.MethodGet)
 	router.HandleFunc("/api/files/{fileId}", fileService.DeleteFile).Methods(http.MethodDelete)
-	router.HandleFunc("/health", health).Methods(http.MethodGet)
+	router.HandleFunc("/health", api.Health).Methods(http.MethodGet)
 
 	// Kanban endpoints
 	router.HandleFunc("/api/kanban", kanbanService.GetBoard).Methods(http.MethodGet)
@@ -39,7 +43,7 @@ func main() {
 	))
 
 	// Aplikuj CORS middleware
-	handler := corsMiddleware(router)
+	handler := api.CorsMiddleware(router)
 
 	port := ":8081"
 	log.Printf("Serwer plików uruchomiony na porcie %s", port)
