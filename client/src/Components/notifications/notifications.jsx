@@ -90,10 +90,6 @@ export default function Notifications() {
 
   return (
     <div className="notifications-root">
-      <div className="notifications-header">
-        Powiadomienia <span className="badge">{messages.length}</span>
-        <span className={`notifications-status notifications-status-${status}`}>{status}</span>
-      </div>
       <div className="notifications-list">
         {messages.map((m, i) => (
           <div key={i} className="notification-item">
@@ -103,7 +99,6 @@ export default function Notifications() {
                 <>
                   <div className="notification-topic">{view.title}</div>
                   <div className="notification-payload">{view.subtitle}</div>
-                  <div className="notification-meta">{view.type}</div>
                 </>
               )
             })()}
@@ -111,6 +106,12 @@ export default function Notifications() {
         ))}
         {messages.length === 0 ? <div className="notification-empty">Brak powiadomień</div> : null}
       </div>
+      {/*obecnie zakomentowane bo mi się nie podoba ale może coś jeszcze z tym wykminię 
+      <div className="notifications-header">
+        Powiadomienia <span className="badge">{messages.length}</span>
+        <span className={`notifications-status notifications-status-${status}`}>{status}</span>
+      </div> */}
+      
     </div>
   )
 }

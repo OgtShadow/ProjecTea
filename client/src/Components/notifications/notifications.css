@@ -1,26 +1,46 @@
 .notifications-root {
   position: fixed;
-  right: 12px;
-  top: 72px;
-  width: 320px;
+  right: 50px;
+  bottom: 110px;
+  width: 265px;
   max-height: 420px;
-  background: rgba(255,255,255,0.95);
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  background: rgba(255, 255, 255, 0);
   overflow: hidden;
   font-size: 13px;
   z-index: 1200;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 .notifications-header {
   padding: 8px 12px;
-  background: #f6f6f6;
-  border-bottom: 1px solid #eee;
   font-weight: 600;
 }
-.badge { background:#e53935; color:white; padding:2px 8px; border-radius:12px; margin-left:8px; font-size:12px }
-.notifications-list { padding: 8px; max-height: 360px; overflow: auto }
-.notification-item { padding: 8px; border-bottom: 1px solid #f1f1f1 }
-.notification-topic { font-weight:700; font-size:12px }
-.notification-payload { font-size:12px; color:#333; margin-top:4px }
-.notification-empty { padding:12px; color:#666 }
+.notification-item {
+    padding: 8px;
+    background: white;
+    max-width: 265px;
+    border-radius: 10px;
+    margin-bottom: 5px;
+
+}
+.badge { 
+    background:#e53935; 
+    color:white; 
+    padding:2px 8px; 
+    border-radius:12px; 
+    margin-left:8px; 
+    font-size:12px 
+}
+.notifications-list { 
+    padding: 8px; 
+    max-height: 360px; 
+    overflow: auto 
+}
+.notification-topic { 
+    font-weight:700; 
+    font-size:12px 
+}
+.notification-empty { 
+    padding:12px; 
+    color:#666 
+}
