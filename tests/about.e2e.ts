@@ -1,8 +1,9 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('About Page', () => {
-  test('should display About content', async ({ page }) => {
+  test('should display about page', async ({ page }) => {
+    await page.goto('/', { waitUntil: 'networkidle' });
     await page.goto('/about');
-    await expect(page.getByText('About')).toBeVisible();
+    await expect(page.locator('h1')).toContainText('About');
   });
 });

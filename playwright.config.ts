@@ -31,9 +31,11 @@ export default defineConfig({
   /* Shared settings for all tests in their files */
   use: {
     /* Base URL to use in actions like `await page.goto('/')` */
-    baseURL: 'http://localhost:8082',
+    // @ts-ignore
+    baseURL: (typeof process !== 'undefined' && process.env.BASE_URL) || 'http://localhost:8080',
     /* Collect trace when retrying the failed test, taking debugging for granted */
     trace: 'on-first-retry',
+    ignoreHTTPSErrors: true,
     /* Video to keep on failures */
     video: 'retain-on-failure',
     /* Maximum time each action can take */
@@ -81,8 +83,8 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: isDocker ? undefined:{
-    command: 'npm run .',
-    url: 'http://localhost:8082/api/status',
+    command: 'npm run dev',
+    url: 'http://localhost:8080',
     reuseExistingServer: true,
     timeout: 120 * 1000,
   },

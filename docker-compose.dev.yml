@@ -63,7 +63,7 @@ services:
     container_name: playwright-tests
     command: npx playwright test --no-deps
     environment:
-      - BASE_URL=http://java-backend:8082
+      - BASE_URL=http://frontend:8080
       - PLAYWRIGHT_ENABLED=true
     volumes:
       - .:/app

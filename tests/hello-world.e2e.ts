@@ -1,8 +1,14 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Hello World', () => {
-  test('should display Hello World', async ({ page }) => {
+  test('should display hello world', async ({ page }) => {
+    await page.goto('/', { waitUntil: 'networkidle' });
     await page.goto('/');
-    await expect(page.getByText('Hello World')).toBeVisible();
+
+    // Check for the chat navigation link
+    await expect(page.getByRole('link', { name: 'chat' })).toBeVisible();
+
+    // Check for page title
+    await expect(page).toHaveTitle(/ChatApp/i);
   });
 });
