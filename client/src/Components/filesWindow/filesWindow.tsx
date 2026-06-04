@@ -1,5 +1,5 @@
 function FilesWindow() {
-  const files;
+  const files = 1;
 
   const fileIcons: Record<string, string> = {
     '.jpg': '🖼️',
