@@ -1,0 +1,87 @@
+[33m4433f0f[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mgRPC/MQTT-service[m[33m, [m[1;31morigin/gRPC/MQTT-service[m[33m)[m HEAD@{0}: checkout: moving from ima-gona-cry to gRPC/MQTT-service
+[33m3512388[m[33m ([m[1;32mima-gona-cry[m[33m)[m HEAD@{1}: checkout: moving from 3512388f6e7252c9fca8b8fbe0f28380e3eb9dfa to ima-gona-cry
+[33m3512388[m[33m ([m[1;32mima-gona-cry[m[33m)[m HEAD@{2}: checkout: moving from the-one-who-codes to 3512388f6e7252c9fca8b8fbe0f28380e3eb9dfa
+[33m8a32264[m[33m ([m[1;31morigin/the-one-who-codes[m[33m, [m[1;32mthe-one-who-codes[m[33m)[m HEAD@{3}: merge Actuator: Merge made by the 'ort' strategy.
+[33m3512388[m[33m ([m[1;32mima-gona-cry[m[33m)[m HEAD@{4}: commit (merge): Merge branch 'stress-tests' into the-one-who-codes
+[33m4433f0f[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mgRPC/MQTT-service[m[33m, [m[1;31morigin/gRPC/MQTT-service[m[33m)[m HEAD@{5}: checkout: moving from gRPC/MQTT-service to the-one-who-codes
+[33m4433f0f[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mgRPC/MQTT-service[m[33m, [m[1;31morigin/gRPC/MQTT-service[m[33m)[m HEAD@{6}: commit: update git ignore
+[33md257f76[m HEAD@{7}: commit: add notifications styling
+[33mc9fb25d[m HEAD@{8}: commit: change kanban messages display
+[33md69f74b[m HEAD@{9}: commit: add kanban notifications
+[33mdb27d75[m HEAD@{10}: commit: add notification go system
+[33m97a2458[m HEAD@{11}: commit: update go swagger documentation
+[33m007d696[m HEAD@{12}: commit: add readme and kanban fix
+[33ma8ae35f[m HEAD@{13}: commit: integrate kanban with our grpc
+[33maa14966[m HEAD@{14}: commit: improve go server structure
+[33me55c1bc[m HEAD@{15}: merge kanban-add: Merge made by the 'ort' strategy.
+[33m929a6c3[m HEAD@{16}: commit: add grpc mqqt to go server and its docker container
+[33m2c79ec8[m[33m ([m[1;31morigin/Better-To-Do[m[33m, [m[1;32mBetter-To-Do[m[33m)[m HEAD@{17}: checkout: moving from Better-To-Do to gRPC/MQTT-service
+[33m2c79ec8[m[33m ([m[1;31morigin/Better-To-Do[m[33m, [m[1;32mBetter-To-Do[m[33m)[m HEAD@{18}: commit: add checklists for tss and paw to ToDo
+[33md1b7bca[m[33m ([m[1;31morigin/tempo-saver[m[33m, [m[1;32mtempo-saver[m[33m)[m HEAD@{19}: checkout: moving from stress-tests to Better-To-Do
+[33m0b37f63[m[33m ([m[1;31morigin/stress-tests[m[33m, [m[1;32mstress-tests[m[33m)[m HEAD@{20}: commit: add stress tests by Jmeter
+[33md1b7bca[m[33m ([m[1;31morigin/tempo-saver[m[33m, [m[1;32mtempo-saver[m[33m)[m HEAD@{21}: checkout: moving from tempo-saver to stress-tests
+[33md1b7bca[m[33m ([m[1;31morigin/tempo-saver[m[33m, [m[1;32mtempo-saver[m[33m)[m HEAD@{22}: checkout: moving from kanban-add to tempo-saver
+[33mdd7289f[m[33m ([m[1;31morigin/kanban-add[m[33m, [m[1;32mkanban-add[m[33m)[m HEAD@{23}: commit: add styling to kanban
+[33m5967265[m HEAD@{24}: commit: add deletion of tasks
+[33md7a7044[m HEAD@{25}: commit: add kanban mechanic
+[33mb1bf192[m HEAD@{26}: commit: add kanban visuals
+[33m02e45ed[m HEAD@{27}: commit: upgrade kanban component structure to match other
+[33m96258f2[m HEAD@{28}: commit: add kanban component
+[33md1b7bca[m[33m ([m[1;31morigin/tempo-saver[m[33m, [m[1;32mtempo-saver[m[33m)[m HEAD@{29}: checkout: moving from tempo-saver to kanban-add
+[33md1b7bca[m[33m ([m[1;31morigin/tempo-saver[m[33m, [m[1;32mtempo-saver[m[33m)[m HEAD@{30}: checkout: moving from chanels-and-kanban to tempo-saver
+[33mb496c5d[m[33m ([m[1;31morigin/chanels-and-kanban[m[33m, [m[1;32mchanels-and-kanban[m[33m)[m HEAD@{31}: checkout: moving from Actuator to chanels-and-kanban
+[33m43ba320[m[33m ([m[1;31morigin/Actuator[m[33m, [m[1;32mActuator[m[33m)[m HEAD@{32}: commit: update todo
+[33m3afd7d3[m HEAD@{33}: commit: add actuator view
+[33m4b50a0c[m HEAD@{34}: commit: add actuator
+[33m4a12b7d[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m HEAD@{35}: checkout: moving from main to Actuator
+[33m4a12b7d[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m HEAD@{36}: commit (merge): Merge branch 'chanels-and-kanban'
+[33m72a7bdb[m HEAD@{37}: commit: phantom commit
+[33mdb78ef6[m HEAD@{38}: checkout: moving from chanels-and-kanban to main
+[33mb496c5d[m[33m ([m[1;31morigin/chanels-and-kanban[m[33m, [m[1;32mchanels-and-kanban[m[33m)[m HEAD@{39}: merge main: Merge made by the 'ort' strategy.
+[33md1b7bca[m[33m ([m[1;31morigin/tempo-saver[m[33m, [m[1;32mtempo-saver[m[33m)[m HEAD@{40}: commit: update ToDo
+[33m2488c28[m HEAD@{41}: checkout: moving from main to chanels-and-kanban
+[33mdb78ef6[m HEAD@{42}: checkout: moving from chanels-and-kanban to main
+[33m2488c28[m HEAD@{43}: checkout: moving from main to chanels-and-kanban
+[33mdb78ef6[m HEAD@{44}: pull --tags origin main: Fast-forward
+[33m273b3b7[m HEAD@{45}: checkout: moving from chanels-and-kanban to main
+[33m2488c28[m HEAD@{46}: commit: add rest of the file window
+[33m18ad687[m HEAD@{47}: commit: add files window
+[33me468b88[m HEAD@{48}: commit: add struct for a file window
+[33mbe3ad7a[m HEAD@{49}: commit: dwl react assets
+[33mbdecbf2[m HEAD@{50}: commit: change place of login and add login component
+[33md6a9311[m HEAD@{51}: commit: change right side to content instead of chat
+[33m873f1d3[m HEAD@{52}: commit: add nav bar
+[33ma50f5b9[m[33m ([m[1;31morigin/FIle-sender-go[m[33m, [m[1;32mFIle-sender-go[m[33m)[m HEAD@{53}: checkout: moving from FIle-sender-go to chanels-and-kanban
+[33ma50f5b9[m[33m ([m[1;31morigin/FIle-sender-go[m[33m, [m[1;32mFIle-sender-go[m[33m)[m HEAD@{54}: commit: update swagger for go
+[33mcce123f[m HEAD@{55}: commit: add test to every endpoint
+[33m09144d2[m HEAD@{56}: commit: add swager to go backend
+[33m2b63a30[m HEAD@{57}: commit: update toDo
+[33mdee16bb[m HEAD@{58}: checkout: moving from main to FIle-sender-go
+[33m273b3b7[m HEAD@{59}: checkout: moving from oracle-database-connection to main
+[33mb73a0e9[m[33m ([m[1;32moracle-database-connection[m[33m)[m HEAD@{60}: checkout: moving from main to oracle-database-connection
+[33m273b3b7[m HEAD@{61}: pull: Fast-forward
+[33m4f4a162[m HEAD@{62}: checkout: moving from main to main
+[33m4f4a162[m HEAD@{63}: checkout: moving from FIle-sender-go to main
+[33mdee16bb[m HEAD@{64}: commit: add dowloding files
+[33m6c45fe6[m HEAD@{65}: commit: sending messages by go service
+[33mea72669[m[33m ([m[1;31morigin/cookies[m[33m, [m[1;32mcookies[m[33m)[m HEAD@{66}: checkout: moving from cookies to FIle-sender-go
+[33mea72669[m[33m ([m[1;31morigin/cookies[m[33m, [m[1;32mcookies[m[33m)[m HEAD@{67}: commit: update todo
+[33m5d04471[m HEAD@{68}: commit: fix
+[33m66b9aae[m HEAD@{69}: commit: add backend (does not work for now ;-;)
+[33m9bc572c[m HEAD@{70}: commit: add react components
+[33m8d59e8c[m HEAD@{71}: commit: add pom dependencies for tokens and security
+[33m4f4a162[m HEAD@{72}: checkout: moving from main to cookies
+[33m4f4a162[m HEAD@{73}: commit: update readme
+[33mca8d5cf[m[33m ([m[1;31morigin/swagger[m[33m, [m[1;32mswagger[m[33m)[m HEAD@{74}: merge swagger: Fast-forward
+[33m688d4a3[m HEAD@{75}: checkout: moving from main to main
+[33m688d4a3[m HEAD@{76}: checkout: moving from swagger to main
+[33mca8d5cf[m[33m ([m[1;31morigin/swagger[m[33m, [m[1;32mswagger[m[33m)[m HEAD@{77}: commit: del swager for node
+[33mccf04c6[m HEAD@{78}: commit: add endpoint validation
+[33mc74f6ee[m HEAD@{79}: commit: add descriptions to core
+[33m8333df5[m HEAD@{80}: commit: add swagger
+[33m688d4a3[m HEAD@{81}: checkout: moving from main to swagger
+[33m688d4a3[m HEAD@{82}: pull: Fast-forward
+[33me98a1e1[m HEAD@{83}: checkout: moving from Https-configuration to main
+[33mb86285a[m[33m ([m[1;31morigin/Https-configuration[m[33m, [m[1;32mHttps-configuration[m[33m)[m HEAD@{84}: checkout: moving from main to Https-configuration
+[33me98a1e1[m HEAD@{85}: checkout: moving from Https-configuration to main
+[33mb86285a[m[33m ([m[1;31morigin/Https-confi
