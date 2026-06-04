@@ -19,7 +19,8 @@
 }
 
 .file-item {
-  display: flex;
+  display: grid;
+  grid-template-columns: 40px 1fr auto auto;
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem;

@@ -1,5 +1,7 @@
+import React from 'react';
+
 function FilesWindow() {
-  const files = 1;
+  const API_BASE = 'http://localhost:8081/api';
 
   const fileIcons: Record<string, string> = {
     '.jpg': '🖼️',
@@ -27,26 +29,89 @@ function FilesWindow() {
     return fileIcons[extension] || '📁';
   };
 
-  const handleFileClick = (file: string) => {
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(new Blob([file]));
-    link.download = file;
-    link.click();
+  const handleFileClick = async (fileId: string) => {
+    try {
+      const response = await fetch(`${API_BASE}/files/download/${fileId}`);
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        const filename = decodeURIComponent(fileId);
+        link.href = url;
+        link.download = filename;
+        link.click();
+        window.URL.revokeObjectURL(url);
+      }
+    } catch (error) {
+      console.error('Nie udało się pobrać pliku:', error);
+    }
+  };
+
+  const loadFiles = async () => {
+    try {
+      const response = await fetch(`${API_BASE}/files`);
+      const data = await response.json();
+
+      if (response.ok && data.files) {
+        return data.files;
+      }
+      return [];
+    } catch (error) {
+      console.error('Nie udało się pobrać listy plików:', error);
+      return [];
+    }
+  };
+
+  const [files, setFiles] = React.useState<FileInfo[]>([]);
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    loadFiles().then(setFiles);
+    setLoading(false);
+  }, []);
+
+  type FileInfo = {
+    name: string;
+    size: number;
+    uploadAt: Date;
+  };
+
+  const formatSize = (size: number): string => {
+    return `${(size / 1024).toFixed(1)} KB`;
+  };
+
+  const formatDate = (date: Date): string => {
+    return new Date(date).toLocaleDateString('pl-PL', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
   };
 
   return (
     <div className="files-window">
       <h2>Uploaded Files</h2>
-      {files ? (
+      {loading ? (
+        <p>Ładowanie plików...</p>
+      ) : files.length > 0 ? (
         <div className="files-grid">
-          <div className="file-item" onClick={() => handleFileClick('file.txt')}>
-            <span className="file-icon">{getFileIcon('file.txt')}</span>
-            <span className="file-name">file.txt</span>
-            <span className="file-size">0 KB</span>
-          </div>
+          {files.map((file) => (
+            <div
+              key={file.name}
+              className="file-item"
+              onClick={() => handleFileClick(file.name)}
+            >
+              <span className="file-icon">{getFileIcon(file.name)}</span>
+              <span className="file-name">{file.name}</span>
+              <span className="file-size">{formatSize(file.size)}</span>
+              <span className="file-date">{formatDate(file.uploadAt)}</span>
+            </div>
+          ))}
         </div>
       ) : (
-        <p className="no-files">No files found in uploads directory.</p>
+        <p className="no-files">Brak plików lub błąd pobierania.</p>
       )}
     </div>
   );
