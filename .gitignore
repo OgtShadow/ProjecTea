@@ -12,3 +12,12 @@ server/jmeter/report/
 server/jmeter/*.jtl
 server/jmeter/results*.jtl
 server/jmeter/jmeter*.log
+
+# Playwright artifacts
+tests/report/
+*.zip
+*.crx
+*.xpi
+*.app
+
+test-results*

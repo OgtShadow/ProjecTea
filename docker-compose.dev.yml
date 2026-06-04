@@ -1,7 +1,11 @@
+version: '3.8'
+
 services:
   frontend:
     image: node:20-alpine
     working_dir: /app
+    networks:
+      - projectea-network
     volumes:
       - ./client:/app
       - ./server/java/src/main/resources/certs:/app/certs:ro
@@ -16,6 +20,8 @@ services:
   go-backend:
     image: golang:1.23-alpine
     working_dir: /app
+    networks:
+      - projectea-network
     volumes:
       - ./server/go:/app
       - /app/pkg/mod
@@ -26,6 +32,8 @@ services:
   java-backend:
     image: maven:4.0.0-rc-5-eclipse-temurin-25-noble
     working_dir: /app
+    networks:
+      - projectea-network
     volumes:
       - ./server/java:/app
       - /app/.m2
@@ -36,6 +44,8 @@ services:
   nginx:
     image: nginx:stable
     restart: unless-stopped
+    networks:
+      - projectea-network
     ports:
       - "80:80"
       - "443:443"
@@ -45,3 +55,25 @@ services:
     depends_on:
       - frontend
       - java-backend
+
+  playwright-tests:
+    build:
+      context: .
+      dockerfile: Dockerfile.playwright
+    container_name: playwright-tests
+    command: npx playwright test --no-deps
+    environment:
+      - BASE_URL=http://java-backend:8082
+      - PLAYWRIGHT_ENABLED=true
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      - java-backend
+      - go-backend
+    networks:
+      - projectea-network
+
+networks:
+  projectea-network:
+    driver: bridge

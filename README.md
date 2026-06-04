@@ -89,8 +89,6 @@ Endpoint do zgłaszania nowej wiadomości czatu (możesz wywołać z backendu Ja
 ```bash
 curl -X POST http://localhost:8081/api/notify/chat -H "Content-Type: application/json" -d '{"from":"Alice","text":"Cześć"}'
 ```
- 
-```
 
 ## Wymagania
 
@@ -256,6 +254,54 @@ Krotka instrukcja uruchomienia:
 
 Jesli chcesz wykonac test recznie w trybie non-GUI, szczegoly uruchomienia i dokumentacja screenshotow sa opisane w [server/jmeter/README_JMeter.md](server/jmeter/README_JMeter.md).
 
+## Playwright E2E Testy
+
+Testy end-to-end naprawiane przez Playwright.
+
+### Uruchomienie testów
+
+**Zawsze uruchamiaj docker-compose przed testami:**
+
+```bash
+# Start stacka (jeśli nie jest już włączony)
+docker compose -f docker-compose.dev.yml up -d
+
+# Uruchomienie testów (automatycznie uruchomi docker-compose jeśli potrzebne)
+npx playwright test
+
+# Uruchomienie testów w Chrome tylko
+npx playwright test --project=chromium
+
+# Generowanie raportu HTML
+npx playwright show-report
+```
+
+### Jak testy działą
+
+1. **Automatyczny start stacka**: Konfiguracja Playwright (`playwright.config.ts`) sprawdza czy `/api/status` na `localhost:8082` jest dostępny
+2. **Jeśli stack nie jest uruchomiony**: Automatycznie uruchamia `docker compose -f docker-compose.dev.yml up -d`
+3. **Jeśli stack jest już uruchomiony**: Testy zaczynają się od razu (chyba że `CI=true`)
+
+### Lokalne uruchamianie testów
+
+```bash
+# Start stacka
+docker compose -f docker-compose.dev.yml up -d
+
+# Uruchomienie testów
+npx playwright test
+
+# Generowanie raportu
+npx playwright show-report
+```
+
+### W raporcie HTML znajdziesz:
+- `tests/report/html-report/index.html` - raport z podglądem filmów i snapshotów
+
+### CI/CD
+
+W CI ustaw `CI=true` aby włączyć automatyczne ponowienie testów.
+
 ## Przydatne komendy
 
 ```bash
@@ -268,4 +314,58 @@ docker compose -f docker-compose.dev.yml logs -f
 # build backendu Java bez testow
 cd server/java && mvn -DskipTests compile
 ```
-.
+
+## Testy Playwright (E2E)
+
+Sprawdzanie przepływu użytkownika na czacie i innych ekranach.
+
+### Struktura testów
+
+```
+tests/
+├── page/          # Lokalne komponenty (Page Objects)
+│   ├── home.ts   # Ekran startowy
+│   ├── chat.ts   # Okno czatu
+│   └── about.ts  # Strona o aplikacji
+├── about.e2e.ts  # Testy E2E dla o nas
+└── hello-world.e2e.ts # Test "Hello World" jako starter
+```
+
+### Uruchomienie
+
+```bash
+# Przejdz się przez wszystkie testy
+npm test
+
+# Uruchom dla Chrome (domyślny)
+npx playwright test --project=chromium
+
+# Uruchom dla Firefox
+npx playwright test --project=firefox
+
+# Uruchom tylko testy z pliku
+npx playwright test tests/hello-world.e2e.ts
+```
+
+### Konfiguracja
+
+[`playwright.config.ts`](playwright.config.ts) zawiera:
+
+- baseURL: `http://localhost:5000`
+- Timeout: 30s na test
+- Retry: 2x na CI
+- Workers: 1 (nie równoległe testy dla determinizmu)
+- Reporter: JSON (CI) + HTML (report) + list (dev)
+
+### Raporty
+
+Po testach znajdziesz:
+
+- HTML: `tests/report/html-report/`
+- JSON: `tests/report/report.json`
+
+### Dodanie nowego testu
+
+1. W pliku `tests/NazwaStrony.e2e.ts` dodaj `test.describe` dla swojej strony.
+2. Używaj Page Objects z `tests/page/` dla stabilnych selektorów.
+3. Przetestuj w Chromium → Firefox → WebKit.
