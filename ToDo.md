@@ -97,7 +97,7 @@
 - [ ] Dodaj wizualną reprezentację danych
 - [ ] lista plików na modłę notion
 - [ ] system logowania
-- [ ] testy wydajnościowe API
+- [✅] testy wydajnościowe API
 - [ ] testowy prosty serwis wykorzystujący gRPC/MQTT itp.
 - [ ] MVP Kanban: CRUD zadań + przypisywanie.
 - [ ] Kalendarz: tworzenie wydarzeń i integracja z Kanban.
