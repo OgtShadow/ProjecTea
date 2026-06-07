@@ -32,6 +32,8 @@ services:
     command: sh -c "mvn -f /app/pom.xml spring-boot:run"
     ports:
       - "8082:8082"
+    depends_on:
+      - oracle-db
 
   nginx:
     image: nginx:stable
@@ -45,3 +47,19 @@ services:
     depends_on:
       - frontend
       - java-backend
+
+  oracle-db:
+    image: gvenzl/oracle-xe:21-slim-faststart
+    container_name: oracle-db
+    environment:
+      - ORACLE_PASSWORD=ProjecTeaPPS
+      - APP_USER=ProjecTeaDB
+      - APP_USER_PASSWORD=ProjecTeaPPS
+    ports:
+      - "1521:1521"
+    volumes:
+      - oracle-data:/opt/oracle/oradata
+
+volumes:
+  oracle-data:
+  maven-cache:
