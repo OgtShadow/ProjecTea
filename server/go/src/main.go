@@ -37,7 +37,7 @@ func main() {
 	router.HandleFunc("/api/kanban/tasks", kanbanService.CreateTask).Methods(http.MethodPost)
 	router.HandleFunc("/api/kanban/move", kanbanService.MoveTask).Methods(http.MethodPost)
 
-	// Chat notification webhook (called by chat backend when message sent)
+	// Chat notification webhook
 	router.HandleFunc("/api/notify/chat", func(w http.ResponseWriter, r *http.Request) {
 		var payload struct {
 			From string `json:"from"`
@@ -93,16 +93,13 @@ func main() {
 				_, _ = w.Write([]byte(": keepalive\n\n"))
 				flusher.Flush()
 			default:
-				// avoid busy loop if neither event nor keepalive is ready
 				time.Sleep(100 * time.Millisecond)
 			}
 		}
 	}).Methods(http.MethodGet)
-
-	// Aplikuj CORS middleware
 	handler := api.CorsMiddleware(router)
 
 	port := ":8081"
-	log.Printf("Serwer plików uruchomiony na porcie %s", port)
+	log.Printf("Serwer uruchomiony na porcie %s", port)
 	log.Fatal(http.ListenAndServe(port, handler))
 }
