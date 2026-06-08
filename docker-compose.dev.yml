@@ -14,7 +14,11 @@ services:
       - "8080:8080"
 
   go-backend:
-    image: golang:1.23-alpine
+    image: projectea-go-dev
+    build:
+      context: ./server/go
+      target: build
+    entrypoint: ""
     working_dir: /app
     volumes:
       - ./server/go:/app
@@ -24,14 +28,22 @@ services:
       - "8081:8081"
 
   java-backend:
-    image: maven:4.0.0-rc-5-eclipse-temurin-25-noble
+    image: projectea-java-dev
+    build:
+      context: ./server/java
+      target: build
+    entrypoint: ""
     working_dir: /app
     volumes:
       - ./server/java:/app
-      - /app/.m2
-    command: sh -c "mvn -f /app/pom.xml spring-boot:run"
+      - maven-cache:/root/.m2
+    environment:
+      - SPRING_DATA_MONGODB_URI=mongodb://admin:adminpassword@mongodb:27017/projectea_nosql?authSource=admin
+    command: sh -c "chmod +x mvnw && ./mvnw spring-boot:run"
     ports:
-      - "8082:8082"
+      - "8082:8080"
+    depends_on:
+      - oracle-db
 
   nginx:
     image: nginx:stable
@@ -45,3 +57,33 @@ services:
     depends_on:
       - frontend
       - java-backend
+
+  oracle-db:
+    image: gvenzl/oracle-xe:21-slim-faststart
+    container_name: oracle-db
+    environment:
+      - ORACLE_PASSWORD=ProjecTeaPPS
+      - APP_USER=ProjecTeaDB
+      - APP_USER_PASSWORD=ProjecTeaPPS
+    ports:
+      - "1521:1521"
+    volumes:
+      - oracle-data:/opt/oracle/oradata
+  
+  mongodb:
+    image: mongo:latest
+    container_name: projectea_mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=adminpassword
+      - MONGO_INITDB_DATABASE=projectea_nosql
+    volumes:
+      - mongodb_data:/data/db
+
+
+volumes:
+  oracle-data:
+  maven-cache:
+  mongodb_data:
