@@ -67,7 +67,7 @@ public class MessageController {
         return saved;
     }
 
-    @GetMapping("/api/messages/stats")
+    @GetMapping("/stats")
     public ResponseEntity<List<MessageStatsDTO>> getMessageStats() {
         return ResponseEntity.ok(messageService.getStatistics());
     }

@@ -1,18 +1,17 @@
-import { useEffect, useMemo, useState } from 'react';
-import SockJS from 'sockjs-client';
+import { useEffect, useState, useRef } from 'react';
 import { Client } from '@stomp/stompjs';
 import type { Frame, IMessage } from '@stomp/stompjs';
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import type { PieLabelRenderProps } from 'recharts';
 import './graphWindow.css';
 import apiFetch from '../../api';
 
-// Interfejs zgodny z naszym DTO z backendu (MessageStatsDTO)
 interface StatData {
   from: string;
   count: number;
 }
 
-const BACKEND_URL = ''; // Domyślnie używa proxy z Vite lub domyślnego hosta
+// Używamy proxy z Vite - połączenie będzie przekierowane na backend
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d', '#ffc658'];
 
 interface Props {
@@ -22,68 +21,92 @@ interface Props {
 function GraphWindow({ currentUser }: Props) {
   const [stats, setStats] = useState<StatData[]>([]);
   const [wsConnected, setWsConnected] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const stompClientRef = useRef<Client | null>(null);
+  const subscriptionRef = useRef<any>(null);
 
-  // 1. Pobieranie danych początkowych (zanim ktoś wyśle nową wiadomość na czacie)
+  // Pobieranie danych początkowych
   useEffect(() => {
     if (currentUser) {
-      // Zakładam, że dodamy prosty endpoint GET w Springu do pobierania statystyk
       apiFetch('/api/messages/stats')
         .then((r) => {
           if (r.ok) return r.json();
-          return [];
+          throw new Error('Failed to fetch stats');
         })
-        .then((data) => setStats(data))
-        .catch(console.error);
+        .then((data) => {
+          setStats(data || []);
+          setError(null);
+        })
+        .catch((err) => {
+          console.error('Error fetching stats:', err);
+          setError('Nie udało się pobrać statystyk');
+        });
     }
   }, [currentUser]);
 
-  // 2. Konfiguracja nasłuchiwania WebSocketa na żywo
-  const stompClient = useMemo(() => {
+  // Inicjalizacja WebSocketa
+  useEffect(() => {
+    if (!currentUser) return;
+
+    // Konstruuj URL dla WebSocket (dynamicznie na podstawie bieżącej lokacji)
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const host = window.location.hostname;
+    const port = window.location.port ? `:${window.location.port}` : '';
+    const wsUrl = `${protocol}//${host}${port}/ws`;
+
     const client = new Client({
-      webSocketFactory: () => new SockJS(`${BACKEND_URL}/ws`),
+      brokerURL: wsUrl,
       reconnectDelay: 3000,
-      onConnect: (frame: Frame) => {
+      heartbeatIncoming: 4000,
+      heartbeatOutgoing: 4000,
+      onConnect: () => {
         setWsConnected(true);
+        setError(null);
         console.log('Graph WS connected');
 
-        // Nasłuchujemy na kanale statystyk (tutaj backend wypycha zaktualizowane dane)
-        client.subscribe('/topic/stats', (msg: IMessage) => {
+        // Subscribe na statystyki
+        subscriptionRef.current = client.subscribe('/topic/stats', (msg: IMessage) => {
           if (msg.body) {
             try {
               const updatedStats = JSON.parse(msg.body) as StatData[];
-              setStats(updatedStats);
+              setStats(updatedStats || []);
             } catch (error) {
-              console.error('Invalid stats payload', error);
+              console.error('Invalid stats payload:', error);
+              setError('Błąd parsowania danych WebSocket');
             }
           }
         });
       },
       onDisconnect: () => {
         setWsConnected(false);
+        console.log('Graph WS disconnected');
+      },
+      onStompError: (frame: Frame) => {
+        console.error('STOMP error:', frame);
+        setWsConnected(false);
+        setError('Błąd połączenia WebSocket');
       },
     });
 
-    return client;
-  }, []);
-
-  // 3. Zarządzanie cyklem życia WebSocketa
-  useEffect(() => {
-    if (!currentUser) {
-      if (stompClient.active) stompClient.deactivate();
-      return;
-    }
-    stompClient.activate();
+    stompClientRef.current = client;
+    client.activate();
 
     return () => {
-      stompClient.deactivate();
+      if (subscriptionRef.current) {
+        subscriptionRef.current.unsubscribe();
+      }
+      if (stompClientRef.current && stompClientRef.current.active) {
+        stompClientRef.current.deactivate();
+      }
     };
-  }, [currentUser, stompClient]);
+  }, [currentUser]);
 
-  // Renderowanie komponentu
   return (
     <div className="graph-window">
       <h2>Aktywność na czacie {wsConnected ? '🟢' : '🔴'}</h2>
-      
+
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+
       {stats.length === 0 ? (
         <p>Brak danych do wyświetlenia...</p>
       ) : (
@@ -98,9 +121,14 @@ function GraphWindow({ currentUser }: Props) {
                 cy="50%"
                 outerRadius={120}
                 fill="#8884d8"
-                label={(entry) => `${entry.from}: ${entry.count}`}
+                label={(props: PieLabelRenderProps) => {
+                  if (typeof props.value === 'number') {
+                    return `${props.name}: ${props.value}`;
+                  }
+                  return '';
+                }}
               >
-                {stats.map((entry, index) => (
+                {stats.map((_, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
