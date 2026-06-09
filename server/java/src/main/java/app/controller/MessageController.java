@@ -1,6 +1,7 @@
 package app.controller;
 
 import app.dto.CreateMessageRequest;
+import app.dto.MessageStatsDTO;
 import app.model.Message;
 import app.model.ValidationErrorResponse;
 import app.service.MessageService;
@@ -12,6 +13,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -62,5 +65,10 @@ public class MessageController {
         Message saved = messageService.add(input);
         messagingTemplate.convertAndSend("/topic/messages", saved);
         return saved;
+    }
+
+    @GetMapping("/api/messages/stats")
+    public ResponseEntity<List<MessageStatsDTO>> getMessageStats() {
+        return ResponseEntity.ok(messageService.getStatistics());
     }
 }

@@ -1,83 +1,82 @@
 package app.model;
 
-import jakarta.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "\"Projects\"")
+@Document(collection = "projects")
 public class Projects {
 
     /**
-     * Project-s unique id
+     * Project's unique id (W MongoDB domyślnie używamy typu String dla ObjectId)
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_project")
-    private Long idProject;
+    private String idProject;
 
     /**
-     * Project-s name
+     * Project's name
      */
-    @Column(name = "project_name", length = 512, nullable = false)
     private String projectName;
 
     /**
      * Short description about project
      */
-    @Column(name = "description", length = 1024, nullable = false)
     private String description;
 
     /**
-     * Id as foreign key of leader from Users table
+     * Id as foreign key of leader from Users table (Baza Oracle)
+     * Ponieważ MongoDB i Oracle to osobne bazy, przechowujemy tylko ID lidera!
      */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_project_leader_id", referencedColumnName = "id_user", nullable = false)
-    private Users projectLeader;
+    private Long projectLeaderId;
 
     /**
      * Timestamp of project creation
      */
-    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
     /**
      * Last update of changes in project
      */
-    @Column(name = "last_update")
     private LocalDateTime lastUpdate;
 
     /**
-     * Date of project-s deadline
+     * Date of project's deadline
      */
-    @Column(name = "deadline")
     private LocalDate deadline;
 
     /**
-     * Project-s status like active, in_progress, completed, planned, archived
+     * Project's status like active, in_progress, completed, planned, archived
      */
-    @Column(name = "status", length = 64)
     private String status;
 
     /**
      * Visibility of a project: public - everyone can see it, private - only allowed users can see it
      */
-    @Column(name = "visibility", length = 64)
     private String visibility;
 
-    @PrePersist
-    protected void onCreate() {
+    // Pusty konstruktor wymagany przez Spring Data
+    public Projects() {
         this.createdAt = LocalDateTime.now();
     }
 
-    @PreUpdate
-    protected void onUpdate() {
+    // Dodatkowy konstruktor dla wygody
+    public Projects(String projectName, String description, Long projectLeaderId) {
+        this.projectName = projectName;
+        this.description = description;
+        this.projectLeaderId = projectLeaderId;
+        this.createdAt = LocalDateTime.now();
+    }
+
+    // Metoda pomocnicza zamiast @PreUpdate z JPA
+    public void updateTimestamp() {
         this.lastUpdate = LocalDateTime.now();
     }
 
     // Getters and Setters:
-    public Long getIdProject() { return idProject; }
-    public void setIdProject(Long idProject) { this.idProject = idProject; }
+    public String getIdProject() { return idProject; }
+    public void setIdProject(String idProject) { this.idProject = idProject; }
 
     public String getProjectName() { return projectName; }
     public void setProjectName(String projectName) { this.projectName = projectName; }
@@ -85,8 +84,8 @@ public class Projects {
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
 
-    public Users getProjectLeader() { return projectLeader; }
-    public void setProjectLeader(Users projectLeader) { this.projectLeader = projectLeader; }
+    public Long getProjectLeaderId() { return projectLeaderId; }
+    public void setProjectLeaderId(Long projectLeaderId) { this.projectLeaderId = projectLeaderId; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }

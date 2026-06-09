@@ -1,27 +1,35 @@
 package app.service;
 
 import app.model.Message;
+import app.dto.MessageStatsDTO;
+import app.repository.mongo.MessageRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 public class MessageService {
 
-    private final AtomicLong idCounter = new AtomicLong(1);
-    private final List<Message> messages = Collections.synchronizedList(new ArrayList<>());
+    private final MessageRepository messageRepository;
+
+    public MessageService(MessageRepository messageRepository) {
+        this.messageRepository = messageRepository;
+    }
 
     public List<Message> findAll() {
-        return new ArrayList<>(messages);
+        return messageRepository.findAll();
     }
 
     public Message add(Message message) {
-        long id = idCounter.getAndIncrement();
-        Message saved = new Message(id, message.getFrom(), message.getText());
-        messages.add(saved);
-        return saved;
+        // Zapisujemy nową wiadomość bezpośrednio w MongoDB
+        if (message.getTimestamp() == null) {
+            message.setTimestamp(java.time.Instant.now().toString());
+        }
+        return messageRepository.save(message);
+    }
+
+    public List<MessageStatsDTO> getStatistics() {
+        // Pobieramy gotowe statystyki do wykresów
+        return messageRepository.getMessageStatistics();
     }
 }
