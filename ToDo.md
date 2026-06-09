@@ -140,4 +140,4 @@ TSS checklist:
 - ✅ Odczyt zmiennych środowiskowych, danych projektu i prezentacja w widokach ( Actuator )
 - ✅ Bezpieczeństwo transmisji – konfiguracja i wykorzystanie HTTS, własny certyfikat
 - ✅ Usługa RESTful - przykład przesyłania i prezentacji danych w formacie JSON – implementacja części serwerowej – dane w kodzie / dane z bazy – przez komponent serwisowy / TO
-- WebSocket – przykład przesyłania i graficzna (dynamiczna) prezentacji danych – implementacja części serwerowej i klienckiej JS, dane w kodzie / dane z bazy – przez komponent serwisowy
+- ✅WebSocket – przykład przesyłania i graficzna (dynamiczna) prezentacji danych – implementacja części serwerowej i klienckiej JS, dane w kodzie / dane z bazy – przez komponent serwisowy
