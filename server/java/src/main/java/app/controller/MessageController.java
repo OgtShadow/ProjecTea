@@ -67,8 +67,17 @@ public class MessageController {
         return saved;
     }
 
-    @GetMapping("/stats")
+    @GetMapping("/debug/count")
+    public ResponseEntity<Long> getMessageCount() {
+        long count = messageService.getMessageCount();
+        logger.info("Total messages in database: {}", count);
+        return ResponseEntity.ok(count);
+    }
+    @Operation(summary = "Get message statistics", description = "Returns statistics of messages grouped by sender.")
     public ResponseEntity<List<MessageStatsDTO>> getMessageStats() {
-        return ResponseEntity.ok(messageService.getStatistics());
+        logger.info("Stats endpoint called");
+        List<MessageStatsDTO> stats = messageService.getStatistics();
+        logger.info("Returning {} stats", stats.size());
+        return ResponseEntity.ok(stats);
     }
 }

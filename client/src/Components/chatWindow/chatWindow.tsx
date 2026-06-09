@@ -18,9 +18,10 @@ const BACKEND_URL = ''
 interface Props {
   currentUser: string | null
   isCheckingSession: boolean
+  onMessageSent?: () => void
 }
 
-function ChatWindow({ currentUser, isCheckingSession }: Props) {
+function ChatWindow({ currentUser, isCheckingSession, onMessageSent }: Props) {
   const [wsConnected, setWsConnected] = useState(false)
   const [messages, setMessages] = useState<Message[]>([])
 
@@ -97,6 +98,7 @@ function ChatWindow({ currentUser, isCheckingSession }: Props) {
       destination: '/app/send',
       body: JSON.stringify({ text }),
     })
+    onMessageSent?.()
   }
 
   const handleFileUpload = (file: File) => {

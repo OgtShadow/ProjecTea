@@ -1,4 +1,5 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import SockJS from 'sockjs-client';
 import { Client } from '@stomp/stompjs';
 import type { Frame, IMessage } from '@stomp/stompjs';
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
@@ -11,95 +12,73 @@ interface StatData {
   count: number;
 }
 
-// Używamy proxy z Vite - połączenie będzie przekierowane na backend
+const BACKEND_URL = '';
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d', '#ffc658'];
 
 interface Props {
   currentUser: string | null;
+  messageUpdateTrigger?: number;
 }
 
-function GraphWindow({ currentUser }: Props) {
+function GraphWindow({ currentUser, messageUpdateTrigger }: Props) {
   const [stats, setStats] = useState<StatData[]>([]);
   const [wsConnected, setWsConnected] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const stompClientRef = useRef<Client | null>(null);
-  const subscriptionRef = useRef<any>(null);
 
-  // Pobieranie danych początkowych
-  useEffect(() => {
-    if (currentUser) {
-      apiFetch('/api/messages/stats')
-        .then((r) => {
-          if (r.ok) return r.json();
-          throw new Error('Failed to fetch stats');
-        })
-        .then((data) => {
-          setStats(data || []);
-          setError(null);
-        })
-        .catch((err) => {
-          console.error('Error fetching stats:', err);
-          setError('Nie udało się pobrać statystyk');
-        });
-    }
-  }, [currentUser]);
-
-  // Inicjalizacja WebSocketa
-  useEffect(() => {
-    if (!currentUser) return;
-
-    // Konstruuj URL dla WebSocket (dynamicznie na podstawie bieżącej lokacji)
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const host = window.location.hostname;
-    const port = window.location.port ? `:${window.location.port}` : '';
-    const wsUrl = `${protocol}//${host}${port}/ws`;
-
+  const stompClient = useMemo(() => {
     const client = new Client({
-      brokerURL: wsUrl,
+      webSocketFactory: () => new SockJS(`${BACKEND_URL}/ws`),
       reconnectDelay: 3000,
-      heartbeatIncoming: 4000,
-      heartbeatOutgoing: 4000,
-      onConnect: () => {
+      debug: (str: string) => {
+        console.debug('[GraphWindow STOMP]', str);
+      },
+      onConnect: (frame: Frame) => {
+        console.log('[GraphWindow] WS connected', frame);
         setWsConnected(true);
         setError(null);
-        console.log('Graph WS connected');
 
-        // Subscribe na statystyki
-        subscriptionRef.current = client.subscribe('/topic/stats', (msg: IMessage) => {
+        console.log('[GraphWindow] Subscribing to /topic/stats...');
+        const subscription = client.subscribe('/topic/stats', (msg: IMessage) => {
+          console.log('[GraphWindow] Received stats:', msg.body);
           if (msg.body) {
             try {
               const updatedStats = JSON.parse(msg.body) as StatData[];
+              console.log('[GraphWindow] Stats updated:', updatedStats);
               setStats(updatedStats || []);
             } catch (error) {
-              console.error('Invalid stats payload:', error);
-              setError('Błąd parsowania danych WebSocket');
+              console.error('[GraphWindow] Error parsing stats:', error);
+              setError('Błąd parsowania danych');
             }
           }
         });
-      },
-      onDisconnect: () => {
-        setWsConnected(false);
-        console.log('Graph WS disconnected');
+        console.log('[GraphWindow] Subscription created:', subscription);
       },
       onStompError: (frame: Frame) => {
-        console.error('STOMP error:', frame);
-        setWsConnected(false);
+        console.error('[GraphWindow] STOMP error:', frame);
         setError('Błąd połączenia WebSocket');
+      },
+      onDisconnect: () => {
+        console.log('[GraphWindow] WS disconnected');
+        setWsConnected(false);
       },
     });
 
-    stompClientRef.current = client;
-    client.activate();
+    return client;
+  }, []);
+
+  // Inicjalizacja WebSocketa
+  useEffect(() => {
+    if (!currentUser) {
+      if (stompClient.active) stompClient.deactivate();
+      return;
+    }
+
+    stompClient.activate();
 
     return () => {
-      if (subscriptionRef.current) {
-        subscriptionRef.current.unsubscribe();
-      }
-      if (stompClientRef.current && stompClientRef.current.active) {
-        stompClientRef.current.deactivate();
-      }
+      stompClient.deactivate();
     };
-  }, [currentUser]);
+  }, [currentUser, stompClient]);
 
   return (
     <div className="graph-window">
