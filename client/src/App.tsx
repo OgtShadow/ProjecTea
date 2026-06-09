@@ -4,10 +4,11 @@ import ChatWindow from './Components/chatWindow/chatWindow'
 import FilesWindow from './Components/filesWindow/filesWindow.tsx'
 import KanbanWindow from './Components/kanbanWindow/kanbanWindow'
 import Notifications from './Components/notifications/notifications'
+import GraphWindow from './Components/GraphWindow/GraphWindow'
 import './App.css'
 import apiFetch from './api'
 
-type ActiveView = 'chat' | 'files' | 'kanban'
+type ActiveView = 'chat' | 'files' | 'kanban' | 'graph'
 
 function App() {
   const [currentUser, setCurrentUser] = useState<string | null>(null)
@@ -41,6 +42,8 @@ function App() {
           <ChatWindow currentUser={currentUser} isCheckingSession={isCheckingSession} />
         ) : activeView === 'files' ? (
           <FilesWindow />
+        ) : activeView === 'graph' ? (
+          <GraphWindow />
         ) : (
           <KanbanWindow />
         )}
