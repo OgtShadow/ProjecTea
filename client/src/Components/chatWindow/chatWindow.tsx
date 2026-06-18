@@ -24,13 +24,6 @@ interface Props {
 function ChatWindow({ currentUser, isCheckingSession, onMessageSent }: Props) {
   const [wsConnected, setWsConnected] = useState(false)
   const [messages, setMessages] = useState<Message[]>([])
-  const [currentUser, setCurrentUser] = useState<string | null>(null)
-  const [usernameInput, setUsernameInput] = useState('')
-  const [passwordInput, setPasswordInput] = useState('')
-  const [authError, setAuthError] = useState('')
-  const [isCheckingSession, setIsCheckingSession] = useState(true)
-
-// tutaj się wydupcyło przy mergu :> (nad tym)
 
   const stompClient = useMemo(() => {
     const client = new Client({
@@ -94,48 +87,8 @@ function ChatWindow({ currentUser, isCheckingSession, onMessageSent }: Props) {
     }
   }, [currentUser, stompClient])
 
-  const login = async () => {
-    const trimmedUsername = usernameInput.trim()
-    
-    if (trimmedUsername.length < 2) {
-      setAuthError('Username must have at least 2 characters.')
-      return
-    }
-    
-    if (!passwordInput) {
-      setAuthError('Password is required.')
-      return
-    }
-
-    setAuthError('')
-    const response = await apiFetch('/api/auth/login', {
-      method: 'POST',
-      body: JSON.stringify({ 
-        username: trimmedUsername, 
-        password: passwordInput
-      }),
-    })
-
-    if (!response.ok) {
-      setAuthError('Login failed. Check credentials.')
-      return
-    }
-
-    const payload = (await response.json()) as AuthUserResponse
-    setCurrentUser(payload.username)
-    setUsernameInput('')
-    setPasswordInput('')
-  }
-
-  const logout = async () => {
-    await apiFetch('/api/auth/logout', { method: 'POST' })
-    setCurrentUser(null)
-    setWsConnected(false)
-    setMessages([])
-  }
-
   const sendWsMessage = (text: string) => {
-    if (!text.trim()) return
+    if (!text.trim() || !wsConnected) return
 
     stompClient.publish({
       destination: '/app/send',
@@ -156,45 +109,11 @@ function ChatWindow({ currentUser, isCheckingSession, onMessageSent }: Props) {
     <div className="chat-window">
       <div className='session-bar'>
         {currentUser ? (
-          <>
-            <div className='session-state'>User: {currentUser}</div>
-            <button onClick={logout} className='session-button'>Logout</button>
-          </>
+          <div className='session-state'>User: {currentUser}</div>
         ) : (
-          <>
-            <input
-              type='text'
-              className='session-input'
-              value={usernameInput}
-              onChange={(e) => setUsernameInput(e.target.value)}
-              placeholder='Username'
-            />
-            {/* NOWE POLE NA HASŁO */}
-            <input
-              type='password'
-              className='session-input'
-              value={passwordInput}
-              onChange={(e) => setPasswordInput(e.target.value)}
-              placeholder='Password'
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  login().catch(console.error)
-                }
-              }}
-            />
-            <button
-              onClick={() => {
-                login().catch(console.error)
-              }}
-              className='session-button'
-            >
-              Login
-            </button>
-          </>
+          <div className='session-state'>Not logged in. Use login in the left panel.</div>
         )}
       </div>
-
-      {authError && <div className='session-error'>{authError}</div>}
 
       <h2>Chat Window Status: {wsConnected ? 'connected' : 'disconnected'}</h2>
       <div className="chat-messages">

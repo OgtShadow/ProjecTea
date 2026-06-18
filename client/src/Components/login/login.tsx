@@ -9,6 +9,7 @@ interface Props {
 
 function Login({ currentUser, setCurrentUser }: Props) {
   const [usernameInput, setUsernameInput] = useState('')
+  const [passwordInput, setPasswordInput] = useState('')
   const [authError, setAuthError] = useState('')
 
   const login = async () => {
@@ -18,20 +19,26 @@ function Login({ currentUser, setCurrentUser }: Props) {
       return
     }
 
+    if (!passwordInput) {
+      setAuthError('Password is required.')
+      return
+    }
+
     setAuthError('')
     const response = await apiFetch('/api/auth/login', {
       method: 'POST',
-      body: JSON.stringify({ username: trimmed }),
+      body: JSON.stringify({ username: trimmed, password: passwordInput }),
     })
 
     if (!response.ok) {
-      setAuthError('Login failed.')
+      setAuthError('Login failed. Check credentials.')
       return
     }
 
     const payload = await response.json()
     setCurrentUser(payload.username)
     setUsernameInput('')
+    setPasswordInput('')
   }
 
   const logout = async () => {
@@ -55,6 +62,18 @@ function Login({ currentUser, setCurrentUser }: Props) {
         value={usernameInput}
         onChange={(e) => setUsernameInput(e.target.value)}
         placeholder="Username"
+      />
+      <input
+        type="password"
+        className="session-input"
+        value={passwordInput}
+        onChange={(e) => setPasswordInput(e.target.value)}
+        placeholder="Password"
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            login().catch(console.error)
+          }
+        }}
       />
       <button className="nav-button" onClick={() => login().catch(console.error)}>Login</button>
       {authError && <div className="session-error">{authError}</div>}
