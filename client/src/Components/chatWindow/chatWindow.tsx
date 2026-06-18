@@ -36,6 +36,7 @@ function ChatWindow() {
   const [messages, setMessages] = useState<Message[]>([])
   const [currentUser, setCurrentUser] = useState<string | null>(null)
   const [usernameInput, setUsernameInput] = useState('')
+  const [passwordInput, setPasswordInput] = useState('')
   const [authError, setAuthError] = useState('')
   const [isCheckingSession, setIsCheckingSession] = useState(true)
 
@@ -121,26 +122,36 @@ function ChatWindow() {
   }, [currentUser, stompClient])
 
   const login = async () => {
-    const trimmed = usernameInput.trim()
-    if (trimmed.length < 2) {
+    const trimmedUsername = usernameInput.trim()
+    
+    if (trimmedUsername.length < 2) {
       setAuthError('Username must have at least 2 characters.')
+      return
+    }
+    
+    if (!passwordInput) {
+      setAuthError('Password is required.')
       return
     }
 
     setAuthError('')
     const response = await apiFetch('/api/auth/login', {
       method: 'POST',
-      body: JSON.stringify({ username: trimmed }),
+      body: JSON.stringify({ 
+        username: trimmedUsername, 
+        password: passwordInput
+      }),
     })
 
     if (!response.ok) {
-      setAuthError('Login failed.')
+      setAuthError('Login failed. Check credentials.')
       return
     }
 
     const payload = (await response.json()) as AuthUserResponse
     setCurrentUser(payload.username)
     setUsernameInput('')
+    setPasswordInput('')
   }
 
   const logout = async () => {
@@ -179,6 +190,14 @@ function ChatWindow() {
               value={usernameInput}
               onChange={(e) => setUsernameInput(e.target.value)}
               placeholder='Username'
+            />
+            {/* NOWE POLE NA HASŁO */}
+            <input
+              type='password'
+              className='session-input'
+              value={passwordInput}
+              onChange={(e) => setPasswordInput(e.target.value)}
+              placeholder='Password'
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
                   login().catch(console.error)

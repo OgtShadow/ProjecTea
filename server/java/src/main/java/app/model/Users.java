@@ -11,43 +11,43 @@ public class Users {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_user")
+    @Column(name = "\"id_user\"")
     private Long idUser;
 
     /**
      * User-s unique nickname
      */
-    @Column(name = "username", length = 128, nullable = false, unique = true)
+    @Column(name = "\"username\"", length = 128, nullable = false, unique = true)
     private String username;
 
     /**
      * User-s email to contact
      */
-    @Column(name = "email", length = 256, nullable = false, unique = true)
+    @Column(name = "\"email\"", length = 256, nullable = false, unique = true)
     private String email;
 
     /**
      * Unique password of a user
      */
-    @Column(name = "password", length = 128, nullable = false)
+    @Column(name = "\"password\"", length = 128, nullable = false)
     private String password;
 
     /**
      * User-s first name
      */
-    @Column(name = "name", length = 256)
+    @Column(name = "\"name\"", length = 256)
     private String name;
 
     /**
      * User-s surname
      */
-    @Column(name = "surname", length = 256)
+    @Column(name = "\"surname\"", length = 256)
     private String surname;
 
     /**
      * User-s role like admin, leader, member
      */
-    @Column(name = "role", length = 128)
+    @Column(name = "\"role\"", length = 128)
     private String role;
 
     // Getters and Setters:

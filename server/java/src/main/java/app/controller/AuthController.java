@@ -12,6 +12,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,22 +30,36 @@ public class AuthController {
 
     private final JwtService jwtService;
     private final SessionCookieService sessionCookieService;
+    private final AuthenticationManager authenticationManager;
 
-    public AuthController(JwtService jwtService, SessionCookieService sessionCookieService) {
+    public AuthController(JwtService jwtService, SessionCookieService sessionCookieService, AuthenticationManager authenticationManager) {
         this.jwtService = jwtService;
         this.sessionCookieService = sessionCookieService;
+        this.authenticationManager = authenticationManager;
     }
 
     @PostMapping("/login")
     @Operation(summary = "Create session", description = "Creates a user session and sets JWT cookie.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Session created"),
-            @ApiResponse(responseCode = "400", description = "Validation error")
+            @ApiResponse(responseCode = "400", description = "Validation error"),
+            @ApiResponse(responseCode = "401", description = "Invalid credentials")
     })
     public AuthUserResponse login(@Valid @RequestBody LoginRequest request, HttpServletResponse response) {
-        String token = jwtService.generateToken(request.getUsername().trim());
+        
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getUsername().trim(),
+                        request.getPassword()
+                )
+        );
+
+        String authenticatedUsername = authentication.getName();
+
+        String token = jwtService.generateToken(authenticatedUsername);
         sessionCookieService.writeSessionCookie(response, token);
-        return new AuthUserResponse(request.getUsername().trim());
+        
+        return new AuthUserResponse(authenticatedUsername);
     }
 
     @GetMapping("/me")
