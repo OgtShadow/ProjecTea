@@ -1,7 +1,7 @@
 package app.auth;
 
 import app.model.Users;
-import app.repository.UsersRepository;
+import app.repository.jpa.UsersRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
