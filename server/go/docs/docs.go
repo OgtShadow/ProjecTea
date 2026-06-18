@@ -189,6 +189,49 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/kanban": {
+            "get": {
+                "description": "Zwraca aktualny stan tablicy Kanban z kolumnami i zadaniami.",
+                "produces": ["application/json"],
+                "tags": ["Kanban"],
+                "summary": "Pobierz tablicę Kanban",
+                "responses": {
+                    "200": { "description": "Tablica Kanban", "schema": { "$ref": "#/definitions/main.KanbanBoard" } }
+                }
+            }
+        },
+        "/api/kanban/tasks": {
+            "post": {
+                "description": "Tworzy nowe zadanie w wskazanej kolumnie (domyślnie 'todo').",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "tags": ["Kanban"],
+                "summary": "Utwórz zadanie",
+                "parameters": [
+                    { "in": "body", "name": "body", "required": true, "schema": { "type": "object", "properties": { "title": { "type": "string" }, "description": { "type": "string" }, "column": { "type": "string" } } } }
+                ],
+                "responses": {
+                    "200": { "description": "Utworzone zadanie", "schema": { "$ref": "#/definitions/main.Task" } },
+                    "400": { "description": "Błąd walidacji" }
+                }
+            }
+        },
+        "/api/kanban/move": {
+            "post": {
+                "description": "Przenosi zadanie między kolumnami lub ustawia pozycję w kolumnie.",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "tags": ["Kanban"],
+                "summary": "Przenieś zadanie",
+                "parameters": [
+                    { "in": "body", "name": "body", "required": true, "schema": { "type": "object", "properties": { "taskId": { "type": "string" }, "fromColumn": { "type": "string" }, "toColumn": { "type": "string" }, "toIndex": { "type": "integer" } } } }
+                ],
+                "responses": {
+                    "200": { "description": "Operacja zakończona powodzeniem", "schema": { "type": "object", "additionalProperties": { "type": "boolean" } } },
+                    "400": { "description": "Zadanie nie znalezione" }
+                }
+            }
+        },
         "/health": {
             "get": {
                 "description": "Prosty endpoint do sprawdzenia, czy serwer jest dostępny i działający prawidłowo",
@@ -241,6 +284,28 @@ const docTemplate = `{
                 "uploadAt": {
                     "type": "string",
                     "example": "2026-04-29T10:30:00Z"
+                }
+            }
+        },
+        "main.Task": {
+            "description": "Reprezentacja zadania Kanban",
+            "type": "object",
+            "properties": {
+                "id": { "type": "string", "example": "1704067800000000000" },
+                "title": { "type": "string", "example": "Nowe zadanie" },
+                "description": { "type": "string", "example": "Opis zadania" }
+            }
+        },
+        "main.KanbanBoard": {
+            "description": "Struktura tablicy Kanban z kolumnami i zadaniami",
+            "type": "object",
+            "properties": {
+                "columns": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "array",
+                        "items": { "$ref": "#/definitions/main.Task" }
+                    }
                 }
             }
         }

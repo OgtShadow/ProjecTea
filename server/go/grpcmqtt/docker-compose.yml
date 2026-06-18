@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  mosquitto:
+    image: eclipse-mosquitto:2.0
+    ports:
+      - "1883:1883"
+    restart: unless-stopped
+    volumes:
+      - ./mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+
+  grpcmqtt:
+    build: .
+    depends_on:
+      - mosquitto
+    ports:
+      - "50051:50051"
+    environment:
+      - MQTT_BROKER=tcp://mosquitto:1883
+    restart: on-failure
+  client:
+    build:
+      context: .
+      target: builder
+    depends_on:
+      - mosquitto
+      - grpcmqtt
+    command: ["sh", "-c", "go run ./client"]
+    restart: "no"

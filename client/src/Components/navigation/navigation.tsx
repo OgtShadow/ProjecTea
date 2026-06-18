@@ -1,7 +1,7 @@
 import './navigation.css'
 import Login from '../login/login'
 
-type ActiveView = 'chat' | 'files'
+type ActiveView = 'chat' | 'files' | 'kanban'| 'graph'
 
 interface Props {
   currentUser: string | null
@@ -25,6 +25,18 @@ function Navigation({ currentUser, setCurrentUser, activeView, setActiveView }: 
           onClick={() => setActiveView('files')}
         >
           files
+        </button>
+        <button
+          className={`nav-button${activeView === 'kanban' ? ' active' : ''}`}
+          onClick={() => setActiveView('kanban')}
+        >
+          kanban
+        </button>
+        <button
+          className={`nav-button${activeView === 'graph' ? ' active' : ''}`}
+          onClick={() => setActiveView('graph')}
+        >
+          graph
         </button>
       </div>
 

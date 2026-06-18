@@ -1,6 +1,6 @@
 version: "3.9"
 services:
-  ffrontend:
+  frontend:
     image: node:20-alpine
     working_dir: /app
     volumes:
@@ -30,3 +30,19 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8082:8080"
+
+  mongodb:
+    image: mongo:latest
+    container_name: projectea_mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=adminpassword
+      - MONGO_INITDB_DATABASE=projectea_nosql
+    volumes:
+      - mongodb_data:/data/db
+    
+
+volumes:
+  mongodb_data:

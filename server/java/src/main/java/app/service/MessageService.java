@@ -1,27 +1,44 @@
 package app.service;
 
 import app.model.Message;
+import app.dto.MessageStatsDTO;
+import app.repository.mongo.MessageRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 public class MessageService {
+    private static final Logger logger = LoggerFactory.getLogger(MessageService.class);
+    private final MessageRepository messageRepository;
 
-    private final AtomicLong idCounter = new AtomicLong(1);
-    private final List<Message> messages = Collections.synchronizedList(new ArrayList<>());
+    public MessageService(MessageRepository messageRepository) {
+        this.messageRepository = messageRepository;
+    }
 
     public List<Message> findAll() {
-        return new ArrayList<>(messages);
+        return messageRepository.findAll();
     }
 
     public Message add(Message message) {
-        long id = idCounter.getAndIncrement();
-        Message saved = new Message(id, message.getFrom(), message.getText());
-        messages.add(saved);
+        if (message.getTimestamp() == null) {
+            message.setTimestamp(java.time.Instant.now().toString());
+        }
+        Message saved = messageRepository.save(message);
+        logger.info("Message saved from: {} - Total messages: {}", message.getFrom(), messageRepository.count());
         return saved;
+    }
+
+    public List<MessageStatsDTO> getStatistics() {
+        List<MessageStatsDTO> stats = messageRepository.getMessageStatistics();
+        logger.info("Retrieved statistics: {} entries", stats.size());
+        stats.forEach(s -> logger.debug("Stats - from: {}, count: {}", s.getFrom(), s.getCount()));
+        return stats;
+    }
+
+    public long getMessageCount() {
+        return messageRepository.count();
     }
 }
