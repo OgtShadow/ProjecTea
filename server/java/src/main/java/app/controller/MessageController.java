@@ -77,6 +77,8 @@ public class MessageController {
         logger.info("Total messages in database: {}", count);
         return ResponseEntity.ok(count);
     }
+
+    @GetMapping("/stats")
     @Operation(summary = "Get message statistics", description = "Returns statistics of messages grouped by sender.")
     public ResponseEntity<List<MessageStatsDTO>> getMessageStats() {
         logger.info("Stats endpoint called");

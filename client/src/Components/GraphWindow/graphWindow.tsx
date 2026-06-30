@@ -25,6 +25,29 @@ function GraphWindow({ currentUser, messageUpdateTrigger }: Props) {
   const [wsConnected, setWsConnected] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (!currentUser) {
+      setStats([]);
+      return;
+    }
+
+    apiFetch('/api/messages/stats')
+      .then((r) => {
+        if (!r.ok) {
+          throw new Error(`Stats request failed: ${r.status}`);
+        }
+        return r.json();
+      })
+      .then((data: StatData[]) => {
+        setStats(Array.isArray(data) ? data : []);
+        setError(null);
+      })
+      .catch((e) => {
+        console.error('[GraphWindow] Error loading stats:', e);
+        setError('Nie udało się pobrać statystyk');
+      });
+  }, [currentUser, messageUpdateTrigger]);
+
   const stompClient = useMemo(() => {
     const client = new Client({
       webSocketFactory: () => new SockJS(`${BACKEND_URL}/ws`),
