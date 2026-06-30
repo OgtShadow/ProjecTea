@@ -111,7 +111,7 @@ Plik zaktualizowany: [ProjecTea/ToDo.md](ProjecTea/ToDo.md)
 PAW checklist:
 
 - ✅ dokumentacja API w Swaggerze
-- działająca baza danych z kluczowymi elementami (tabelami, kolekcjami);
+- ✅ działająca baza danych z kluczowymi elementami (tabelami, kolekcjami);
 - ✅ implementacja szkieletu aplikacji i podstawowych endpointów API (dowolna technologia)
 - ✅ umożliwienie demonstracji tworzenia, odczytywania, modyfikowania i usuwania danych (CRUD) za pośrednictwem REST API
 - ✅ przygotowanie skryptów inicjalizujacych bazę danych
