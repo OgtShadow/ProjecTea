@@ -39,7 +39,7 @@ services:
     environment:
       - MONGO_INITDB_ROOT_USERNAME=admin
       - MONGO_INITDB_ROOT_PASSWORD=adminpassword
-      - MONGO_INITDB_DATABASE=projectea_nosql
+      - MONGO_INITDB_DATABASE=projecTea
     volumes:
       - mongodb_data:/data/db
     

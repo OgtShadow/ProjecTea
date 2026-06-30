@@ -1,3 +1,4 @@
+/*
 package app.config;
 
 import com.mongodb.ConnectionString;
@@ -11,12 +12,12 @@ import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;
 public class MongoConfig extends AbstractMongoClientConfiguration {
     @Override
     protected String getDatabaseName() {
-        return "projectea_nosql";
+        return "projecTea";
     }
 
     @Override
     public MongoClient mongoClient() {
-        ConnectionString connectionString = new ConnectionString("mongodb://admin:adminpassword@mongodb:27017/projectea_nosql?authSource=admin");
+        ConnectionString connectionString = new ConnectionString("mongodb://admin:adminpassword@mongodb:27017/projecTea?authSource=admin");
         
         MongoClientSettings mongoClientSettings = MongoClientSettings.builder()
             .applyConnectionString(connectionString)
@@ -30,3 +31,4 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
         return true;
     }
 }
+     */
