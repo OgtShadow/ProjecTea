@@ -17,12 +17,9 @@ import (
 	httpSwagger "github.com/swaggo/http-swagger"
 )
 
-// main sets up services and routes
 func main() {
 	router := mux.NewRouter()
 	fileService := files.NewFileService("./uploads")
-
-	// Kanban service (in-memory)
 	kanbanService := kanban.NewKanbanService()
 
 	// API endpoints dla plików

@@ -10,9 +10,12 @@ const COLUMNS = [
 
 function Kanban() {
   const [board, setBoard] = useState({ columns: { todo: [], inprogress: [], done: [], trash: [] } })
+  const [users, setUsers] = useState([])
   const [newTitle, setNewTitle] = useState('')
   const [newDesc, setNewDesc] = useState('')
   const [newColumn, setNewColumn] = useState('todo')
+  const [newDueDate, setNewDueDate] = useState('')
+  const [newAssignee, setNewAssignee] = useState('')
   const refs = {
     todo: useRef(null),
     inprogress: useRef(null),
@@ -30,6 +33,45 @@ function Kanban() {
         setBoard({ columns: { todo: cols.todo || [], inprogress: cols.inprogress || [], done: cols.done || [], trash: cols.trash || [] } })
       })
       .catch((e) => console.error('kanban fetch error', e))
+  }, [])
+
+  useEffect(() => {
+    fetch('/api/users', { credentials: 'include' })
+      .then((r) => {
+        if (!r.ok) {
+          throw new Error('users fetch failed')
+        }
+        return r.json()
+      })
+      .then((data) => {
+        if (!Array.isArray(data)) {
+          setUsers([])
+          return
+        }
+
+        const mapped = data
+          .map((u) => {
+            if (typeof u === 'string') {
+              return { username: u, displayName: u }
+            }
+
+            if (u && typeof u === 'object' && u.username) {
+              return {
+                username: u.username,
+                displayName: u.displayName || u.username,
+              }
+            }
+
+            return null
+          })
+          .filter(Boolean)
+
+        setUsers(mapped)
+      })
+      .catch((e) => {
+        console.error('users fetch error', e)
+        setUsers([])
+      })
   }, [])
 
   // HTML5 drag-and-drop handlers (replaces Sortable to avoid DOM/React conflicts)
@@ -107,6 +149,22 @@ function Kanban() {
       <div className="kanban-create">
         <input value={newTitle} onChange={e => setNewTitle(e.target.value)} placeholder="Tytuł zadania" />
         <input value={newDesc} onChange={e => setNewDesc(e.target.value)} placeholder="Opis (opcjonalnie)" />
+        <input
+          type="date"
+          value={newDueDate}
+          onChange={e => setNewDueDate(e.target.value)}
+          aria-label="Termin zadania"
+        />
+        <select
+          value={newAssignee}
+          onChange={e => setNewAssignee(e.target.value)}
+          aria-label="Przypisz użytkownika"
+        >
+          <option value="">Nieprzypisane</option>
+          {users.map((u) => (
+            <option key={u.username} value={u.username}>{u.displayName}</option>
+          ))}
+        </select>
         <select value={newColumn} onChange={e => setNewColumn(e.target.value)}>
           {COLUMNS.filter(c => c.key !== 'trash').map(c => <option key={c.key} value={c.key}>{c.title}</option>)}
         </select>
@@ -115,7 +173,13 @@ function Kanban() {
           try {
             const res = await fetch('/api/kanban/tasks', {
               method: 'POST', headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ title: newTitle, description: newDesc, column: newColumn })
+              body: JSON.stringify({
+                title: newTitle,
+                description: newDesc,
+                column: newColumn,
+                dueDate: newDueDate,
+                assignee: newAssignee,
+              })
             })
             if (!res.ok) throw new Error('create failed')
             const task = await res.json()
@@ -125,7 +189,7 @@ function Kanban() {
                     [newColumn]: [...(prev.columns[newColumn] || []), task]
                   }
                 }))
-            setNewTitle(''); setNewDesc('')
+            setNewTitle(''); setNewDesc(''); setNewDueDate(''); setNewAssignee('')
           } catch (e) { console.error('create task error', e) }
         }}>Dodaj</button>
       </div>
@@ -138,6 +202,8 @@ function Kanban() {
                 <div key={task.id} className="kanban-card" data-id={task.id} draggable onDragStart={(e) => onDragStart(e, task, col.key, idx)}>
                   <div className="kanban-card-title">{task.title}</div>
                   {task.description ? <div className="kanban-card-desc">{task.description}</div> : null}
+                  {task.dueDate ? <div className="kanban-card-meta">Termin: {task.dueDate}</div> : null}
+                  {task.assignee ? <div className="kanban-card-meta">Przypisane: {task.assignee}</div> : null}
                 </div>
               ))}
             </div>

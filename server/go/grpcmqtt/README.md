@@ -1,6 +1,6 @@
-# gRPC + MQTT demo (Go)
+# gRPC + MQTT
 
-This folder contains a minimal proof-of-concept service demonstrating gRPC + MQTT integration in Go.
+This folder contains a minimal service demonstrating gRPC + MQTT integration in Go.
 
 Layout
 - `proto/messages.proto` – protobuf definition for the service.
@@ -55,4 +55,3 @@ This will build the `grpcmqtt` image and start `mosquitto` and `grpcmqtt` servic
 
 Notes
 - The example subscribes to `#` on the MQTT broker to forward messages to gRPC subscribers; for production refine subscriptions and permissions.
-- If you want the service in another folder, `server/go` is appropriate since it groups server-side Go code. Keeping it under `server/go/grpcmqtt` keeps the demo self-contained and avoids interfering with other services in the repo.
