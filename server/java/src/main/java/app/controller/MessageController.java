@@ -72,6 +72,10 @@ public class MessageController {
     }
 
     @GetMapping("/debug/count")
+    @Operation(summary = "Get message count", description = "Returns total number of messages stored in the database.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Message count returned successfully")
+    })
     public ResponseEntity<Long> getMessageCount() {
         long count = messageService.getMessageCount();
         logger.info("Total messages in database: {}", count);
