@@ -11,11 +11,7 @@ post {
 }
 
 body:multipart-form {
-  file: @file(C:\Users\pszer\OneDrive\Dokumenty\repositories\ProjecTea\server\projectea_server_collection\go\images.jpg)
-}
-
-body:file {
-  file: @file(C:\Users\pszer\OneDrive\Dokumenty\repositories\ProjecTea\server\projectea_server_collection\go\images.jpg) @contentType(image/jpeg)
+  file: @file(go/images.jpg) @contentType(image/jpeg)
 }
 
 tests {
@@ -29,6 +25,7 @@ tests {
     expect(res.getHeader('content-type')).to.include("application/json");
     const setId = res.body.file.fileId;
     bru.setVar("lastFileId", setId);
+    bru.setEnvVar("lastFileId", setId);
   })
 }
 

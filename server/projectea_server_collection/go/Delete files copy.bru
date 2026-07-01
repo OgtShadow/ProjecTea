@@ -10,10 +10,6 @@ delete {
   auth: inherit
 }
 
-body:file {
-  file: @file(C:\Users\pszer\OneDrive\Dokumenty\repositories\ProjecTea\server\projectea_server_collection\go\images.jpg) @contentType(image/jpeg)
-}
-
 tests {
   test("File deleted successfully", async function () {
     expect(res.status).to.equal(200);

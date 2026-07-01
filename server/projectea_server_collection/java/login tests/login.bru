@@ -11,12 +11,28 @@ post {
 }
 
 body:json {
-  {"username": "bruno-tester"}
+  {
+    "username": "OGT_SHADOW",
+    "password": "DwukropekTrzy"
+  }
 }
 
 tests {
   test("Login returns 200 and sets session cookie", async function () {
     expect(res.status).to.equal(200);
-    const setCookie = res.getHeader("set-cookie");
+    const setCookie =
+      res.getHeader("set-cookie") ||
+      res.getHeader("Set-Cookie") ||
+      (res.headers && (res.headers["set-cookie"] || res.headers["Set-Cookie"]));
+
+    expect(setCookie).to.include("PT_SESSION=");
+
+    const rawCookie = Array.isArray(setCookie) ? setCookie[0] : setCookie;
+    const sessionCookie = (rawCookie || "").split(";")[0];
+
+    bru.setVar("sessionCookie", sessionCookie);
+    bru.setEnvVar("sessionCookie", sessionCookie);
+
+    expect(res.body.username).to.equal("OGT_SHADOW");
   });
 }

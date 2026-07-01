@@ -5,9 +5,23 @@ meta {
 }
 
 post {
-  url: localhost:8082/api/auth/login
-  body: none
-  auth: inherit
+  url: https://localhost/api/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "username": "OGT_SHADOW",
+    "password": "DwukropekTrzy"
+  }
+}
+
+tests {
+  test("Login trial returns 200 and username", async function () {
+    expect(res.status).to.equal(200);
+    expect(res.body.username).to.equal("OGT_SHADOW");
+  });
 }
 
 settings {
