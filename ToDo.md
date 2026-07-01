@@ -72,9 +72,6 @@
 	- CRUD zadań, przypisywanie, statusy, widok listy i szczegółów.
 10. Implementacja Kalendarza
 	- Tworzenie wydarzeń, przypomnienia, integracja widoku kalendarza.
-11. Testy (jednostkowe, integracyjne, E2E)
-	- Frontend: Vitest/Jest + e2e (Playwright).
-	- Backend: JUnit dla Java, testy Go.
 12. Testy wydajnościowe i profilowanie
 	- Scenariusze obciążeniowe (czat, listy Kanban).
 13. CI/CD i wydania
@@ -92,17 +89,14 @@
 - [✅] Podstawić prosty kanał WebSocket i przetestować komunikację z React.
 - [✅] MVP czat: wysyłanie/odbieranie tekstu + proste UI.
 - [✅] Dodawanie plików/zdjęć — backend storage + frontend upload.
-- [?] Zrobienie Actuatora
-- [ ] Popraw logowanie na Spring Security (ma być osobna baza logowaniowa)
-- [ ] Dodaj wizualną reprezentację danych
+- [✅] Popraw logowanie na Spring Security (ma być osobna baza logowaniowa)
+- [✅] Dodaj wizualną reprezentację danych
 - [✅] lista plików na modłę notion
-- [ ] system logowania
+- [✅] system logowania
 - [✅] testy wydajnościowe API
 - [✅] testowy prosty serwis wykorzystujący gRPC/MQTT itp.
 - [✅] MVP Kanban: CRUD zadań + przypisywanie.
 - [X] Kalendarz: tworzenie wydarzeń i integracja z Kanban.
-- [?] Napisać podstawowe testy jednostkowe i E2E.
-- [ ] Dodać CI workflow (lint→test→build).
 
 ---
 
@@ -111,7 +105,7 @@ Plik zaktualizowany: [ProjecTea/ToDo.md](ProjecTea/ToDo.md)
 PAW checklist:
 
 - ✅ dokumentacja API w Swaggerze
-- działająca baza danych z kluczowymi elementami (tabelami, kolekcjami);
+- ✅ działająca baza danych z kluczowymi elementami (tabelami, kolekcjami);
 - ✅ implementacja szkieletu aplikacji i podstawowych endpointów API (dowolna technologia)
 - ✅ umożliwienie demonstracji tworzenia, odczytywania, modyfikowania i usuwania danych (CRUD) za pośrednictwem REST API
 - ✅ przygotowanie skryptów inicjalizujacych bazę danych
@@ -123,20 +117,8 @@ PAW checklist:
 - ✅ pełne testy API (Swagger/Postman)
 - ✅ skorzystanie z Dockera (np. do bazy danych)
 - ✅ wykorzystanie komunikacji opartej na WebSockets
-- implementacja mechanizmu statysk/logów wykorzystania API 
+- ✅ implementacja mechanizmu statysk/logów wykorzystania API 
 - ✅ upload/download plików
 - ✅ dostęp do API przez HTTPS
 - ✅ testy wydajnościowe API
 - ✅ testowy prosty serwis wykorzystujący gRPC/MQTT itp.
-
-TSS checklist:
-
-- ✅ Architektura MVC – komponenty aplikacji kontrolery, serwisy, widoki, logika itd. Historia tworzenia projektu w Git.
-- Budowa stron JSP/Thymeleaf (użycie elementów dedykowanych wybranej technologii) – tworzenie tabel, formatowanie , SpringSecurity w widokach itp.
-- ✅ Mechanizmy sesji – wykorzystanie mechanizmów sesji do zapisu/odczytu danych aplikacji i zastosowanie ich w logice aplikacji
-- Konfiguracja podstawowych mechanizmów Spring Security (uprawnienia, logowanie, role) – pojedyncza baza / osobna dodatkowa baza z danymi autoryzacyjnymi
-- Modyfikacja danych w bazie (CRUD) za pomocą ORM, prezentacja danych (tabele w widokach aplikacji) i własna baza / dostęp do danych przez komponent serwisowy / TO
-- ✅ Odczyt zmiennych środowiskowych, danych projektu i prezentacja w widokach ( Actuator )
-- ✅ Bezpieczeństwo transmisji – konfiguracja i wykorzystanie HTTS, własny certyfikat
-- ✅ Usługa RESTful - przykład przesyłania i prezentacji danych w formacie JSON – implementacja części serwerowej – dane w kodzie / dane z bazy – przez komponent serwisowy / TO
-- ✅WebSocket – przykład przesyłania i graficzna (dynamiczna) prezentacji danych – implementacja części serwerowej i klienckiej JS, dane w kodzie / dane z bazy – przez komponent serwisowy

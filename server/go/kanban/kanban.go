@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strings"
 	"sync"
 	"time"
 
@@ -20,6 +21,8 @@ type Task struct {
 	ID          string `json:"id"`
 	Title       string `json:"title"`
 	Description string `json:"description,omitempty"`
+	DueDate     string `json:"dueDate,omitempty"`
+	Assignee    string `json:"assignee,omitempty"`
 }
 
 type KanbanBoard struct {
@@ -67,12 +70,14 @@ func (ks *KanbanService) GetBoard(w http.ResponseWriter, r *http.Request) {
 	_ = json.NewEncoder(w).Encode(ks.board)
 }
 
-// POST /api/kanban/tasks  { title, description, column }
+// POST /api/kanban/tasks  { title, description, column, dueDate, assignee }
 func (ks *KanbanService) CreateTask(w http.ResponseWriter, r *http.Request) {
 	var payload struct {
 		Title       string `json:"title"`
 		Description string `json:"description"`
 		Column      string `json:"column"`
+		DueDate     string `json:"dueDate"`
+		Assignee    string `json:"assignee"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
 		http.Error(w, "invalid json", http.StatusBadRequest)
@@ -82,9 +87,26 @@ func (ks *KanbanService) CreateTask(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "title required", http.StatusBadRequest)
 		return
 	}
+
+	dueDate := strings.TrimSpace(payload.DueDate)
+	if dueDate != "" {
+		if _, err := time.Parse("2006-01-02", dueDate); err != nil {
+			http.Error(w, "dueDate must be in format YYYY-MM-DD", http.StatusBadRequest)
+			return
+		}
+	}
+
+	assignee := strings.TrimSpace(payload.Assignee)
+
 	ks.mu.Lock()
 	id := fmt.Sprintf("%d", time.Now().UnixNano())
-	task := Task{ID: id, Title: payload.Title, Description: payload.Description}
+	task := Task{
+		ID:          id,
+		Title:       payload.Title,
+		Description: payload.Description,
+		DueDate:     dueDate,
+		Assignee:    assignee,
+	}
 	col := payload.Column
 	if col == "" {
 		col = "todo"

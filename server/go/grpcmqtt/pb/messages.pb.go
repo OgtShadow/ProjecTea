@@ -7,16 +7,15 @@
 package pb
 
 import (
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
 	sync "sync"
+
+	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
+	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 )
 
 const (
-	// Verify that this generated code is sufficiently up-to-date.
 	_ = protoimpl.EnforceVersion(20 - protoimpl.MinVersion)
-	// Verify that runtime/protoimpl is sufficiently up-to-date.
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
@@ -55,8 +54,6 @@ func (x *Message) ProtoReflect() protoreflect.Message {
 	}
 	return mi.MessageOf(x)
 }
-
-// Deprecated: Use Message.ProtoReflect.Descriptor instead.
 func (*Message) Descriptor() ([]byte, []int) {
 	return file_messages_proto_rawDescGZIP(), []int{0}
 }
@@ -110,7 +107,6 @@ func (x *Ack) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Ack.ProtoReflect.Descriptor instead.
 func (*Ack) Descriptor() ([]byte, []int) {
 	return file_messages_proto_rawDescGZIP(), []int{1}
 }

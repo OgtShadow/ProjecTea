@@ -1,10 +1,43 @@
-INSERT INTO "Users" (username, email, password, name, surname, role) 
-VALUES ('OGT_SHADOW', 'piotr.szerlomski@gmail.com', 'DwukropekTrzy', 'Piotrek', 'Szerlomski', 'Admin');
+MERGE INTO "Users" u
+USING (
+	SELECT 'OGT_SHADOW' AS "USERNAME",
+				 'piotr.szerlomski@gmail.com' AS "EMAIL",
+				 'DwukropekTrzy' AS "PASSWORD",
+				 'Piotrek' AS "NAME",
+				 'Szerlomski' AS "SURNAME",
+				 'Admin' AS "ROLE"
+	FROM dual
+) s
+ON (u."USERNAME" = s."USERNAME")
+WHEN MATCHED THEN UPDATE SET
+	u."EMAIL" = s."EMAIL",
+	u."PASSWORD" = s."PASSWORD",
+	u."NAME" = s."NAME",
+	u."SURNAME" = s."SURNAME",
+	u."ROLE" = s."ROLE"
+WHEN NOT MATCHED THEN
+	INSERT ("USERNAME", "EMAIL", "PASSWORD", "NAME", "SURNAME", "ROLE")
+	VALUES (s."USERNAME", s."EMAIL", s."PASSWORD", s."NAME", s."SURNAME", s."ROLE");
 
-INSERT INTO "Users" (username, email, password, name, surname, role) 
-VALUES ('ATKER', 'boczarkacper@gmail.com', 'TrzykropemTrzy', 'Kacper', 'Boczar', 'Admin');
-
-INSERT INTO "Projects" (project_name, description, fk_project_leader_id, created_at) 
-VALUES ('ProjectTea', 'Projekt na TSS i PAW', 1, TIMESTAMP '2026-04-14 15:15:45');
+MERGE INTO "Users" u
+USING (
+	SELECT 'ATKER' AS "USERNAME",
+				 'boczarkacper@gmail.com' AS "EMAIL",
+				 'TrzykropemTrzy' AS "PASSWORD",
+				 'Kacper' AS "NAME",
+				 'Boczar' AS "SURNAME",
+				 'Admin' AS "ROLE"
+	FROM dual
+) s
+ON (u."USERNAME" = s."USERNAME")
+WHEN MATCHED THEN UPDATE SET
+	u."EMAIL" = s."EMAIL",
+	u."PASSWORD" = s."PASSWORD",
+	u."NAME" = s."NAME",
+	u."SURNAME" = s."SURNAME",
+	u."ROLE" = s."ROLE"
+WHEN NOT MATCHED THEN
+	INSERT ("USERNAME", "EMAIL", "PASSWORD", "NAME", "SURNAME", "ROLE")
+	VALUES (s."USERNAME", s."EMAIL", s."PASSWORD", s."NAME", s."SURNAME", s."ROLE");
 
 COMMIT;

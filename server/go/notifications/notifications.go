@@ -43,7 +43,6 @@ func Notify(eventType string, payload any) error {
 	select {
 	case buffer <- event:
 	default:
-		// drop oldest style: if buffer is full, don't block request handlers
 	}
 	return nil
 }
