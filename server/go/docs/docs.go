@@ -208,11 +208,26 @@ const docTemplate = `{
                 "tags": ["Kanban"],
                 "summary": "Utwórz zadanie",
                 "parameters": [
-                    { "in": "body", "name": "body", "required": true, "schema": { "type": "object", "properties": { "title": { "type": "string" }, "description": { "type": "string" }, "column": { "type": "string" } } } }
+                    { "in": "body", "name": "body", "required": true, "schema": { "type": "object", "properties": { "title": { "type": "string" }, "description": { "type": "string" }, "column": { "type": "string" }, "dueDate": { "type": "string", "example": "2026-12-31" }, "assignee": { "type": "string", "example": "OGT_SHADOW" } } } }
                 ],
                 "responses": {
                     "200": { "description": "Utworzone zadanie", "schema": { "$ref": "#/definitions/main.Task" } },
                     "400": { "description": "Błąd walidacji" }
+                }
+            }
+        },
+        "/api/kanban/tasks/{taskId}": {
+            "delete": {
+                "description": "Usuwa zadanie Kanban na podstawie identyfikatora.",
+                "produces": ["application/json"],
+                "tags": ["Kanban"],
+                "summary": "Usuń zadanie",
+                "parameters": [
+                    { "in": "path", "name": "taskId", "required": true, "type": "string", "description": "Identyfikator zadania" }
+                ],
+                "responses": {
+                    "200": { "description": "Zadanie usunięte", "schema": { "type": "object", "additionalProperties": { "type": "boolean" } } },
+                    "404": { "description": "Zadanie nie znalezione" }
                 }
             }
         },
@@ -229,6 +244,33 @@ const docTemplate = `{
                 "responses": {
                     "200": { "description": "Operacja zakończona powodzeniem", "schema": { "type": "object", "additionalProperties": { "type": "boolean" } } },
                     "400": { "description": "Zadanie nie znalezione" }
+                }
+            }
+        },
+        "/api/notify/chat": {
+            "post": {
+                "description": "Przyjmuje payload nowej wiadomości czatu i publikuje notyfikację SSE.",
+                "consumes": ["application/json"],
+                "produces": ["text/plain"],
+                "tags": ["Notifications"],
+                "summary": "Webhook notyfikacji czatu",
+                "parameters": [
+                    { "in": "body", "name": "body", "required": true, "schema": { "type": "object", "properties": { "from": { "type": "string" }, "text": { "type": "string" } } } }
+                ],
+                "responses": {
+                    "200": { "description": "Notyfikacja wysłana" },
+                    "400": { "description": "Błędny JSON" }
+                }
+            }
+        },
+        "/api/notifications/stream": {
+            "get": {
+                "description": "Strumień Server-Sent Events (SSE) z notyfikacjami systemowymi.",
+                "produces": ["text/event-stream"],
+                "tags": ["Notifications"],
+                "summary": "Stream notyfikacji SSE",
+                "responses": {
+                    "200": { "description": "Aktywny strumień SSE" }
                 }
             }
         },
@@ -293,7 +335,9 @@ const docTemplate = `{
             "properties": {
                 "id": { "type": "string", "example": "1704067800000000000" },
                 "title": { "type": "string", "example": "Nowe zadanie" },
-                "description": { "type": "string", "example": "Opis zadania" }
+                "description": { "type": "string", "example": "Opis zadania" },
+                "dueDate": { "type": "string", "example": "2026-12-31" },
+                "assignee": { "type": "string", "example": "OGT_SHADOW" }
             }
         },
         "main.KanbanBoard": {

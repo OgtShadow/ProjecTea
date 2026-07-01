@@ -22,6 +22,35 @@ definitions:
         example: "2026-04-29T10:30:00Z"
         type: string
     type: object
+  main.KanbanBoard:
+    description: Struktura tablicy Kanban z kolumnami i zadaniami
+    properties:
+      columns:
+        additionalProperties:
+          items:
+            $ref: '#/definitions/main.Task'
+          type: array
+        type: object
+    type: object
+  main.Task:
+    description: Reprezentacja zadania Kanban
+    properties:
+      assignee:
+        example: OGT_SHADOW
+        type: string
+      description:
+        example: Opis zadania
+        type: string
+      dueDate:
+        example: "2026-12-31"
+        type: string
+      id:
+        example: "1704067800000000000"
+        type: string
+      title:
+        example: Nowe zadanie
+        type: string
+    type: object
 host: localhost:8081
 info:
   contact: {}
@@ -150,6 +179,149 @@ paths:
       summary: Przesyłanie pliku
       tags:
       - Files
+  /api/kanban:
+    get:
+      description: Zwraca aktualny stan tablicy Kanban z kolumnami i zadaniami.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Tablica Kanban
+          schema:
+            $ref: '#/definitions/main.KanbanBoard'
+      summary: Pobierz tablicę Kanban
+      tags:
+      - Kanban
+  /api/kanban/move:
+    post:
+      consumes:
+      - application/json
+      description: Przenosi zadanie między kolumnami lub ustawia pozycję w kolumnie.
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          properties:
+            fromColumn:
+              type: string
+            taskId:
+              type: string
+            toColumn:
+              type: string
+            toIndex:
+              type: integer
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Operacja zakończona powodzeniem
+          schema:
+            additionalProperties:
+              type: boolean
+            type: object
+        "400":
+          description: Zadanie nie znalezione
+      summary: Przenieś zadanie
+      tags:
+      - Kanban
+  /api/kanban/tasks:
+    post:
+      consumes:
+      - application/json
+      description: Tworzy nowe zadanie w wskazanej kolumnie (domyślnie 'todo').
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          properties:
+            assignee:
+              example: OGT_SHADOW
+              type: string
+            column:
+              type: string
+            description:
+              type: string
+            dueDate:
+              example: "2026-12-31"
+              type: string
+            title:
+              type: string
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Utworzone zadanie
+          schema:
+            $ref: '#/definitions/main.Task'
+        "400":
+          description: Błąd walidacji
+      summary: Utwórz zadanie
+      tags:
+      - Kanban
+  /api/kanban/tasks/{taskId}:
+    delete:
+      description: Usuwa zadanie Kanban na podstawie identyfikatora.
+      parameters:
+      - description: Identyfikator zadania
+        in: path
+        name: taskId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Zadanie usunięte
+          schema:
+            additionalProperties:
+              type: boolean
+            type: object
+        "404":
+          description: Zadanie nie znalezione
+      summary: Usuń zadanie
+      tags:
+      - Kanban
+  /api/notifications/stream:
+    get:
+      description: Strumień Server-Sent Events (SSE) z notyfikacjami systemowymi.
+      produces:
+      - text/event-stream
+      responses:
+        "200":
+          description: Aktywny strumień SSE
+      summary: Stream notyfikacji SSE
+      tags:
+      - Notifications
+  /api/notify/chat:
+    post:
+      consumes:
+      - application/json
+      description: Przyjmuje payload nowej wiadomości czatu i publikuje notyfikację SSE.
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          properties:
+            from:
+              type: string
+            text:
+              type: string
+          type: object
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: Notyfikacja wysłana
+        "400":
+          description: Błędny JSON
+      summary: Webhook notyfikacji czatu
+      tags:
+      - Notifications
   /health:
     get:
       description: Prosty endpoint do sprawdzenia, czy serwer jest dostępny i działający
