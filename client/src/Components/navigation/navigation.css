@@ -4,30 +4,41 @@
     padding: 8px 12px;
     width: 90%;
 }
+
 .navigation {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 12px;
     height: 100%;
 }
 
+.navigation > div:first-child {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
 .nav-button {
-    padding: 10px 12px;
+    padding: 11px 12px;
     border: none;
     background: transparent;
     text-align: left;
     cursor: pointer;
-    border-radius: 6px;
+    border-radius: 10px;
+    color: var(--text-default);
+    transition: background-color var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
 }
 
 .nav-button:hover {
-        background: #0000003d;
-        cursor: pointer;
+    background: #d9eacf;
+    cursor: pointer;
+    transform: translateX(2px);
 }
 
 .nav-button.active {
-    background: #1b4cff10;
+    background: linear-gradient(120deg, #d9ebcf, #cce5d3);
     font-weight: 600;
+    color: #1b402d;
 }
 
 .nav-login {
@@ -35,6 +46,8 @@
     flex-direction: column;
     gap: 8px;
     margin-bottom: 24px;
+    padding-top: 8px;
+    border-top: 1px dashed var(--surface-border);
 }
 
 .nav-login .session-input {

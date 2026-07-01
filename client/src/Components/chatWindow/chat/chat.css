@@ -2,13 +2,41 @@
   text-align: left;
 }
 
+.chat-list h2 {
+  margin: 0 0 10px;
+  font-size: 1.02rem;
+  color: var(--text-default);
+}
+
 .chat-list ul {
-  padding-left: 16px;
+  padding-left: 0;
   margin: 0;
   list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.chat-list li:hover {
+  text-align: left;
+  margin-bottom: 0;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid #e2eddc;
+  background: #f9fdf8;
+  color: #25372b;
 }
 
 .chat-list li {
   text-align: left;
-  margin-bottom: 8px;
+  margin-bottom: 0;
+  padding: 9px 11px;
+  background: #f9fdf8;
+  color: #25372b;
+}
+
+.chat-list a {
+  color: var(--accent);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 2px;
 }

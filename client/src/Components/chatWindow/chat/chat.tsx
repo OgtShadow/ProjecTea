@@ -34,7 +34,7 @@ function Chat({ messages }: ChatProps) {
       <ul>
         {messages.map((msg, idx) => (
           <li key={msg.id != null ? msg.id : `${msg.from}-${msg.text}-${idx}`}>
-            [{msg.id}] {msg.from}: {renderMessageText(msg.text)}
+            {msg.from}: {renderMessageText(msg.text)}
           </li>
         ))}
       </ul>

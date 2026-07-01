@@ -1,8 +1,11 @@
 .files-window {
   padding: 1.5rem;
-  background-color: var(--surface-ground);
+  background: linear-gradient(160deg, #f8fbf7 0%, #eef5ef 100%);
   border-radius: var(--border-radius-lg);
-  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--surface-border);
+  box-shadow: var(--shadow-md);
+  height: 100%;
+  overflow: auto;
 }
 
 .files-window h2 {
@@ -24,16 +27,18 @@
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem;
-  background-color: var(--surface-card);
+  background: var(--surface-card);
   border: 1px solid var(--surface-border);
-  border-radius: var(--border-radius-sm);
+  border-radius: 12px;
   cursor: pointer;
-  transition: var(--transition-fast);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
 }
 
 .file-item:hover {
   background-color: var(--surface-hover);
-  border-color: var(--primary);
+  border-color: #b9d2af;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
 }
 
 .file-icon {
@@ -51,6 +56,11 @@
 
 .file-size {
   font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.file-date {
+  font-size: 0.75rem;
   color: var(--text-secondary);
 }
 

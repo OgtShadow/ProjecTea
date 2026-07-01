@@ -3,12 +3,13 @@
     width: 100%;
     max-height: none;
     height: 100%;
-    background: transparent;
+    background: linear-gradient(180deg, #f8fcf6 0%, #eef5ef 100%);
   overflow: hidden;
   font-size: 13px;
     z-index: auto;
-    border: 1px solid #ccc;
-  border-radius: 4px;
+    border: 1px solid var(--surface-border);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-sm);
 }
 .notifications-header {
   padding: 8px 12px;
@@ -18,12 +19,14 @@
     padding: 8px;
     background: white;
     max-width: 265px;
-    border-radius: 10px;
+    border-radius: 12px;
     margin-bottom: 5px;
+    border: 1px solid #deead9;
+    box-shadow: 0 4px 12px rgba(32, 49, 38, 0.08);
 
 }
 .badge { 
-    background:#e53935; 
+    background:#d85f4f; 
     color:white; 
     padding:2px 8px; 
     border-radius:12px; 
@@ -37,9 +40,15 @@
 }
 .notification-topic { 
     font-weight:700; 
-    font-size:12px 
+  font-size:12px;
+  color: #2d4d3b;
+  margin-bottom: 2px;
+}
+.notification-payload {
+  color: var(--text-secondary);
+  line-height: 1.35;
 }
 .notification-empty { 
     padding:12px; 
-    color:#666 
+  color: var(--text-secondary) 
 }
