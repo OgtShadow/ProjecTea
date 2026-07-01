@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import React from 'react'
+import SideWindow from './Components/sideWindow/sideWindow'
 import Navigation from './Components/navigation/navigation'
 import ChatWindow from './Components/chatWindow/chatWindow'
 import FilesWindow from './Components/filesWindow/filesWindow.tsx'
 import KanbanWindow from './Components/kanbanWindow/kanbanWindow'
-import Notifications from './Components/notifications/notifications'
+import Notifications from './Components/notifications/notifications.jsx'
 import GraphWindow from './Components/GraphWindow/GraphWindow'
 import './App.css'
 import apiFetch from './api'
@@ -37,11 +38,12 @@ function App() {
   return (
     <MessageUpdateContext.Provider value={{ messageCount: messageUpdateTrigger }}>
       <div className="App">
-        <Navigation
-          currentUser={currentUser} setCurrentUser={setCurrentUser}
-          activeView={activeView} setActiveView={setActiveView}
-        />
-        <Notifications />
+        <SideWindow side="left" ariaLabel="Nawigacja">
+          <Navigation
+            currentUser={currentUser} setCurrentUser={setCurrentUser}
+            activeView={activeView} setActiveView={setActiveView}
+          />
+        </SideWindow>
         <div className="content">
           {activeView === 'chat' ? (
             <ChatWindow
@@ -57,6 +59,9 @@ function App() {
             <KanbanWindow />
           )}
         </div>
+        <SideWindow side="right" ariaLabel="Powiadomienia">
+          <Notifications />
+        </SideWindow>
       </div>
     </MessageUpdateContext.Provider>
   )

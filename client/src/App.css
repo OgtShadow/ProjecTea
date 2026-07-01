@@ -12,19 +12,9 @@
     box-sizing: border-box;
 }
 
-.navigation {
-    flex: 0 0 15%;
-    max-width: 15%;
-    min-width: 140px;
-    height: 100vh;
-    overflow-y: auto;
-    background: #f6f7fb;
-    padding: 12px;
-}
-
 .content {
-    flex: 1 1 85%;
-    max-width: 85%;
+    flex: 1 1 auto;
+    min-width: 0;
     height: 100vh;
     overflow: hidden;
     padding: 16px;
@@ -40,15 +30,8 @@
         height: auto;
     }
 
-    .navigation {
-        width: 100%;
-        max-width: 100%;
-        height: auto;
-    }
-
     .content {
         width: 100%;
-        max-width: 100%;
         height: auto;
     }
 }

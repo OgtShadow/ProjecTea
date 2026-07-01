@@ -22,7 +22,6 @@ interface Props {
 
 function GraphWindow({ currentUser, messageUpdateTrigger }: Props) {
   const [stats, setStats] = useState<StatData[]>([]);
-  const [wsConnected, setWsConnected] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -57,7 +56,6 @@ function GraphWindow({ currentUser, messageUpdateTrigger }: Props) {
       },
       onConnect: (frame: Frame) => {
         console.log('[GraphWindow] WS connected', frame);
-        setWsConnected(true);
         setError(null);
 
         console.log('[GraphWindow] Subscribing to /topic/stats...');
@@ -82,8 +80,7 @@ function GraphWindow({ currentUser, messageUpdateTrigger }: Props) {
       },
       onDisconnect: () => {
         console.log('[GraphWindow] WS disconnected');
-        setWsConnected(false);
-      },
+        setError('Połączenie WebSocket zostało zamknięte');},
     });
 
     return client;
@@ -105,7 +102,7 @@ function GraphWindow({ currentUser, messageUpdateTrigger }: Props) {
 
   return (
     <div className="graph-window">
-      <h2>Aktywność na czacie {wsConnected ? '🟢' : '🔴'}</h2>
+      <h2>Aktywność na czacie</h2>
 
       {error && <p style={{ color: 'red' }}>{error}</p>}
 
