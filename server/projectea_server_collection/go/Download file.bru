@@ -1,0 +1,26 @@
+meta {
+  name: Download file
+  type: http
+  seq: 4
+}
+
+get {
+  url: http://localhost:8081/api/files/download/{{lastFileId}}
+  body: none
+  auth: inherit
+}
+
+tests {
+  test("download file returns 200", async function () {
+    expect(res.status).to.equal(200);
+  });
+
+  test("download file returns attachment headers", async function () {
+    expect(res.getHeader("content-disposition")).to.include("attachment");
+  });
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

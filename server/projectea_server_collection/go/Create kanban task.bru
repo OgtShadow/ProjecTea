@@ -1,0 +1,39 @@
+meta {
+  name: Create kanban task
+  type: http
+  seq: 7
+}
+
+post {
+  url: http://localhost:8081/api/kanban/tasks
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "title": "Bruno Kanban Task",
+    "description": "Created by Bruno tests",
+    "column": "todo",
+    "dueDate": "2026-12-31",
+    "assignee": "OGT_SHADOW"
+  }
+}
+
+tests {
+  test("create kanban task returns 200", async function () {
+    expect(res.status).to.equal(200);
+  });
+
+  test("create kanban task returns task payload", async function () {
+    expect(res.body.id).to.not.equal(undefined);
+    expect(res.body.title).to.equal("Bruno Kanban Task");
+    bru.setVar("kanbanTaskId", res.body.id);
+    bru.setEnvVar("kanbanTaskId", res.body.id);
+  });
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

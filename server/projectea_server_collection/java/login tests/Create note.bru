@@ -1,0 +1,41 @@
+meta {
+  name: Create note
+  type: http
+  seq: 8
+}
+
+post {
+  url: https://localhost/api/notes
+  body: json
+  auth: inherit
+}
+
+headers {
+  Cookie: {{sessionCookie}}
+}
+
+body:json {
+  {
+    "title": "Bruno Note",
+    "content": "Created in Bruno flow"
+  }
+}
+
+tests {
+  test("create note returns 200", async function () {
+    expect(res.status).to.equal(200);
+  });
+
+  test("create note returns payload and id", async function () {
+    expect(res.body.title).to.equal("Bruno Note");
+    expect(res.body.content).to.equal("Created in Bruno flow");
+    expect(res.body.id).to.not.equal(undefined);
+    bru.setVar("noteId", res.body.id);
+    bru.setEnvVar("noteId", res.body.id);
+  });
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

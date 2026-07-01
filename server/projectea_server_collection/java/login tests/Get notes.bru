@@ -1,0 +1,30 @@
+meta {
+  name: Get notes
+  type: http
+  seq: 9
+}
+
+get {
+  url: https://localhost/api/notes
+  body: none
+  auth: inherit
+}
+
+headers {
+  Cookie: {{sessionCookie}}
+}
+
+tests {
+  test("get notes returns 200", async function () {
+    expect(res.status).to.equal(200);
+  });
+
+  test("get notes returns array", async function () {
+    expect(Array.isArray(res.body)).to.equal(true);
+  });
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

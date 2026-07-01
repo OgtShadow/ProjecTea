@@ -1,0 +1,35 @@
+meta {
+  name: Move kanban task
+  type: http
+  seq: 8
+}
+
+post {
+  url: http://localhost:8081/api/kanban/move
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "taskId": "{{kanbanTaskId}}",
+    "fromColumn": "todo",
+    "toColumn": "inprogress",
+    "toIndex": 0
+  }
+}
+
+tests {
+  test("move kanban task returns 200", async function () {
+    expect(res.status).to.equal(200);
+  });
+
+  test("move kanban task returns success", async function () {
+    expect(res.body.success).to.equal(true);
+  });
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

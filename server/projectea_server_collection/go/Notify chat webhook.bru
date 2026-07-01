@@ -1,0 +1,33 @@
+meta {
+  name: Notify chat webhook
+  type: http
+  seq: 10
+}
+
+post {
+  url: http://localhost:8081/api/notify/chat
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "from": "bruno",
+    "text": "hello from bruno"
+  }
+}
+
+tests {
+  test("notify chat returns 200", async function () {
+    expect(res.status).to.equal(200);
+  });
+
+  test("notify chat returns ok text", async function () {
+    expect((res.getBody() || "").trim()).to.equal("ok");
+  });
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -1,0 +1,30 @@
+meta {
+  name: Message debug count
+  type: http
+  seq: 6
+}
+
+get {
+  url: https://localhost/api/messages/debug/count
+  body: none
+  auth: inherit
+}
+
+headers {
+  Cookie: {{sessionCookie}}
+}
+
+tests {
+  test("message debug count returns 200", async function () {
+    expect(res.status).to.equal(200);
+  });
+
+  test("message debug count returns number", async function () {
+    expect(typeof res.body).to.equal("number");
+  });
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

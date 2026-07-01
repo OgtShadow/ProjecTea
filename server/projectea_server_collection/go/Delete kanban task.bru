@@ -1,0 +1,26 @@
+meta {
+  name: Delete kanban task
+  type: http
+  seq: 9
+}
+
+delete {
+  url: http://localhost:8081/api/kanban/tasks/{{kanbanTaskId}}
+  body: none
+  auth: inherit
+}
+
+tests {
+  test("delete kanban task returns 200", async function () {
+    expect(res.status).to.equal(200);
+  });
+
+  test("delete kanban task returns success", async function () {
+    expect(res.body.success).to.equal(true);
+  });
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

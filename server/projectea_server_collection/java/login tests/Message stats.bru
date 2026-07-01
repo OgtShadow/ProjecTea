@@ -1,0 +1,30 @@
+meta {
+  name: Message stats
+  type: http
+  seq: 7
+}
+
+get {
+  url: https://localhost/api/messages/stats
+  body: none
+  auth: inherit
+}
+
+headers {
+  Cookie: {{sessionCookie}}
+}
+
+tests {
+  test("message stats returns 200", async function () {
+    expect(res.status).to.equal(200);
+  });
+
+  test("message stats returns array", async function () {
+    expect(Array.isArray(res.body)).to.equal(true);
+  });
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

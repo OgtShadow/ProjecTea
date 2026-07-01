@@ -1,0 +1,30 @@
+meta {
+  name: Get kanban board
+  type: http
+  seq: 6
+}
+
+get {
+  url: http://localhost:8081/api/kanban
+  body: none
+  auth: inherit
+}
+
+tests {
+  test("kanban board returns 200", async function () {
+    expect(res.status).to.equal(200);
+  });
+
+  test("kanban board has expected columns", async function () {
+    expect(res.body.columns).to.not.equal(undefined);
+    expect(res.body.columns.todo).to.not.equal(undefined);
+    expect(res.body.columns.inprogress).to.not.equal(undefined);
+    expect(res.body.columns.done).to.not.equal(undefined);
+    expect(res.body.columns.trash).to.not.equal(undefined);
+  });
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

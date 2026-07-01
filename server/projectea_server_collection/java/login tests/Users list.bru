@@ -1,0 +1,30 @@
+meta {
+  name: Users list
+  type: http
+  seq: 5
+}
+
+get {
+  url: https://localhost/api/users
+  body: none
+  auth: inherit
+}
+
+headers {
+  Cookie: {{sessionCookie}}
+}
+
+tests {
+  test("users list returns 200", async function () {
+    expect(res.status).to.equal(200);
+  });
+
+  test("users list returns array", async function () {
+    expect(Array.isArray(res.body)).to.equal(true);
+  });
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

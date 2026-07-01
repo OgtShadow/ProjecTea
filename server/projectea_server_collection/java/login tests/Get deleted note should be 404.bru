@@ -1,0 +1,26 @@
+meta {
+  name: Get deleted note should be 404
+  type: http
+  seq: 12
+}
+
+get {
+  url: https://localhost/api/notes/{{noteId}}
+  body: none
+  auth: inherit
+}
+
+headers {
+  Cookie: {{sessionCookie}}
+}
+
+tests {
+  test("get deleted note returns 404", async function () {
+    expect(res.status).to.equal(404);
+  });
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

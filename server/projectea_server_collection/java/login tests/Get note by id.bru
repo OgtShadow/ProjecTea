@@ -1,0 +1,31 @@
+meta {
+  name: Get note by id
+  type: http
+  seq: 10
+}
+
+get {
+  url: https://localhost/api/notes/{{noteId}}
+  body: none
+  auth: inherit
+}
+
+headers {
+  Cookie: {{sessionCookie}}
+}
+
+tests {
+  test("get note by id returns 200", async function () {
+    expect(res.status).to.equal(200);
+  });
+
+  test("get note by id returns expected note", async function () {
+    expect(res.body.id).to.equal(bru.getVar("noteId") || bru.getEnvVar("noteId"));
+    expect(res.body.title).to.equal("Bruno Note");
+  });
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
