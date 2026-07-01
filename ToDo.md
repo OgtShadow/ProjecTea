@@ -122,3 +122,4 @@ PAW checklist:
 - ✅ dostęp do API przez HTTPS
 - ✅ testy wydajnościowe API
 - ✅ testowy prosty serwis wykorzystujący gRPC/MQTT itp.
+- ✅ integracja wszystkiego z bazą.
