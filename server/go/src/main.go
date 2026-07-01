@@ -34,6 +34,8 @@ func main() {
 	router.HandleFunc("/api/kanban/tasks", kanbanService.CreateTask).Methods(http.MethodPost)
 	router.HandleFunc("/api/kanban/move", kanbanService.MoveTask).Methods(http.MethodPost)
 
+	router.HandleFunc("/api/kanban/tasks/{taskId}", kanbanService.DeleteTask).Methods(http.MethodDelete)
+
 	// Chat notification webhook
 	router.HandleFunc("/api/notify/chat", func(w http.ResponseWriter, r *http.Request) {
 		var payload struct {
