@@ -32,6 +32,7 @@ func main() {
 	// Kanban endpoints
 	router.HandleFunc("/api/kanban", kanbanService.GetBoard).Methods(http.MethodGet)
 	router.HandleFunc("/api/kanban/tasks", kanbanService.CreateTask).Methods(http.MethodPost)
+	router.HandleFunc("/api/kanban/tasks/{taskId}", kanbanService.DeleteTask).Methods(http.MethodDelete)
 	router.HandleFunc("/api/kanban/move", kanbanService.MoveTask).Methods(http.MethodPost)
 
 	// Chat notification webhook
