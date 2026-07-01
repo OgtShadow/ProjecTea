@@ -8,7 +8,7 @@ Serwer Go obsługujący wysyłanie, pobieranie i zarządzanie plikami dla czatu 
 - ✅ Pobieranie plików
 - ✅ Listowanie dostępnych plików
 - ✅ Usuwanie plików
-- ✅ Zabezpieczenie przed directory traversal
+- ✅ Przechowywanie plików w MongoDB GridFS
 - ✅ CORS support
 - ✅ Limit rozmiaru pliku (100MB)
 
@@ -94,7 +94,9 @@ docker-compose up go-backend
 
 | Zmienna Środowiska | Opis | Domyślna |
 |---|---|---|
-| `UPLOADS_DIR` | Katalog dla uploadów | `./uploads` |
+| `MONGODB_URI` | Połączenie do MongoDB | `mongodb://admin:adminpassword@mongodb:27017/projectea_nosql?authSource=admin` |
+| `MONGODB_DATABASE` | Nazwa bazy MongoDB | `projectea_nosql` |
+| `MONGODB_FILES_BUCKET` | Nazwa bucketa GridFS | `uploads` |
 | Port | Port serwera | `8080` (w kontenerze) |
 
 ## Frontend Integration
@@ -113,7 +115,7 @@ Po pomyślnym wysłaniu, informacja o pliku jest wysłana przez WebSocket jako w
 ## Bezpieczeństwo
 
 - ✅ Walidacja rozmiaru pliku (max 100MB)
-- ✅ Zabezpieczenie przed directory traversal (czyszczenie ścieżek)
+- ✅ Brak zapisu plików na lokalnym dysku backendu (storage w DB)
 - ✅ Unique file IDs (timestamp + original name)
 - ✅ CORS ograniczone do potrzebnych metod
 - ⚠️ TODO: Autentykacja JWT
@@ -126,7 +128,7 @@ Po pomyślnym wysłaniu, informacja o pliku jest wysłana przez WebSocket jako w
 - [ ] Skanowanie wirusów przed zapisem
 - [ ] Rate limiting dla uploadów
 - [ ] Kompresja plików archiwów
-- [ ] Metadata przechowywanie w bazie danych
+- [x] Metadata przechowywanie w bazie danych (MongoDB GridFS)
 - [ ] Backup strategie dla plików
 - [ ] WebSocket integration dla notyfikacji uploadów
 - [ ] Obróbka obrazów (resize, compression)
@@ -153,7 +155,7 @@ go fmt ./...
 Upewnij się że frontend łączy się z poprawnym hostem/portem.
 
 ### Problem: File not found error  
-Sprawdzić czy katalog `./uploads` istnieje i ma odpowiednie uprawnienia.
+Sprawdzić czy MongoDB działa i czy `MONGODB_DATABASE`/`MONGODB_FILES_BUCKET` są poprawne.
 
 ### Problem: File too large
 Limit to 100MB - zmień `maxUploadSize` w `main.go` jeśli potrzeba większych plików.
