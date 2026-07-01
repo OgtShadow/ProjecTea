@@ -27,6 +27,7 @@ services:
       - MONGODB_URI=mongodb://admin:adminpassword@mongodb:27017/projectea_nosql?authSource=admin
       - MONGODB_DATABASE=projectea_nosql
       - MONGODB_KANBAN_COLLECTION=kanban
+      - MONGODB_FILES_BUCKET=uploads
     command: sh -c "go mod download && go run ./src"
     ports:
       - "8081:8081"
