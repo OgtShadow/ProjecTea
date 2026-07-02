@@ -1,43 +1,17 @@
-MERGE INTO "Users" u
-USING (
-	SELECT 'OGT_SHADOW' AS "USERNAME",
-				 'piotr.szerlomski@gmail.com' AS "EMAIL",
-				 'DwukropekTrzy' AS "PASSWORD",
-				 'Piotrek' AS "NAME",
-				 'Szerlomski' AS "SURNAME",
-				 'Admin' AS "ROLE"
-	FROM dual
-) s
-ON (u."USERNAME" = s."USERNAME")
-WHEN MATCHED THEN UPDATE SET
-	u."EMAIL" = s."EMAIL",
-	u."PASSWORD" = s."PASSWORD",
-	u."NAME" = s."NAME",
-	u."SURNAME" = s."SURNAME",
-	u."ROLE" = s."ROLE"
-WHEN NOT MATCHED THEN
-	INSERT ("USERNAME", "EMAIL", "PASSWORD", "NAME", "SURNAME", "ROLE")
-	VALUES (s."USERNAME", s."EMAIL", s."PASSWORD", s."NAME", s."SURNAME", s."ROLE");
+INSERT INTO "Users" (username, email, password, name, surname, role)
+VALUES ('OGT_SHADOW', 'piotr.szerlomski@gmail.com', 'DwukropekTrzy', 'Piotrek', 'Szerlomski', 'Admin')
+ON CONFLICT (username) DO UPDATE SET
+    email = EXCLUDED.email,
+    password = EXCLUDED.password,
+    name = EXCLUDED.name,
+    surname = EXCLUDED.surname,
+    role = EXCLUDED.role;
 
-MERGE INTO "Users" u
-USING (
-	SELECT 'ATKER' AS "USERNAME",
-				 'boczarkacper@gmail.com' AS "EMAIL",
-				 'TrzykropemTrzy' AS "PASSWORD",
-				 'Kacper' AS "NAME",
-				 'Boczar' AS "SURNAME",
-				 'Admin' AS "ROLE"
-	FROM dual
-) s
-ON (u."USERNAME" = s."USERNAME")
-WHEN MATCHED THEN UPDATE SET
-	u."EMAIL" = s."EMAIL",
-	u."PASSWORD" = s."PASSWORD",
-	u."NAME" = s."NAME",
-	u."SURNAME" = s."SURNAME",
-	u."ROLE" = s."ROLE"
-WHEN NOT MATCHED THEN
-	INSERT ("USERNAME", "EMAIL", "PASSWORD", "NAME", "SURNAME", "ROLE")
-	VALUES (s."USERNAME", s."EMAIL", s."PASSWORD", s."NAME", s."SURNAME", s."ROLE");
-
-COMMIT;
+INSERT INTO "Users" (username, email, password, name, surname, role)
+VALUES ('ATKER', 'boczarkacper@gmail.com', 'TrzykropemTrzy', 'Kacper', 'Boczar', 'Admin')
+ON CONFLICT (username) DO UPDATE SET
+    email = EXCLUDED.email,
+    password = EXCLUDED.password,
+    name = EXCLUDED.name,
+    surname = EXCLUDED.surname,
+    role = EXCLUDED.role;
