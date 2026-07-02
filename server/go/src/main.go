@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	_ "projecTea/docs"
@@ -97,7 +98,11 @@ func main() {
 	}).Methods(http.MethodGet)
 	handler := api.CorsMiddleware(router)
 
-	port := ":8081"
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8081"
+	}
+
 	log.Printf("Serwer uruchomiony na porcie %s", port)
-	log.Fatal(http.ListenAndServe(port, handler))
+	log.Fatal(http.ListenAndServe(":"+port, handler))
 }
