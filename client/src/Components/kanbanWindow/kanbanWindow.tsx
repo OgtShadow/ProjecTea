@@ -1,5 +1,7 @@
 import './kanbanWindow.css'
+// @ts-ignore
 import Kanban from './kanban/kanban.jsx'
+// @ts-ignore
 import ErrorBoundary from './ErrorBoundary'
 
 function KanbanWindow() {
