@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import './notifications.css'
 
-function formatNotification(notification) {
+function formatNotification(notification: any) {
   const directType = notification?.type || notification?.Type || 'notification'
   const directPayload = notification?.payload || notification?.Payload || {}
 
@@ -49,8 +49,8 @@ function formatNotification(notification) {
   }
 }
 
-export default function Notifications() {
-  const [messages, setMessages] = useState([])
+function Notifications() {
+  const [messages, setMessages] = useState<any[]>([])
   const [status, setStatus] = useState('connecting')
   const [retryToken, setRetryToken] = useState(0)
   const [retryCount, setRetryCount] = useState(0)
@@ -115,3 +115,5 @@ export default function Notifications() {
     </div>
   )
 }
+
+export default Notifications;
