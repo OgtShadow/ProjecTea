@@ -57,7 +57,7 @@ function Notifications() {
   const [retryCount, setRetryCount] = useState(0)
 
   useEffect(() => {
-    const es = new EventSource('/api/notifications/stream')
+    const es = new EventSource(`${import.meta.env.VITE_GO_API_URL}/api/notifications/stream`)
 
     setStatus('connecting')
     es.onmessage = (e) => {

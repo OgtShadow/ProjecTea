@@ -13,7 +13,7 @@ func CorsMiddleware(next http.Handler) http.Handler {
 		if origin != "" {
 			w.Header().Set("Access-Control-Allow-Origin", origin)
 		} else {
-			w.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")
+			w.Header().Set("Access-Control-Allow-Origin", "https://projectea-frontend.onrender.com")
 		}
 
 		w.Header().Set("Access-Control-Allow-Credentials", "true")
