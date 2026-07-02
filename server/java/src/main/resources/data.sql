@@ -1,17 +1,17 @@
-INSERT INTO "Users" (username, email, password, name, surname, role)
+INSERT INTO "Users" ("USERNAME", "EMAIL", "PASSWORD", "NAME", "SURNAME", "ROLE")
 VALUES ('OGT_SHADOW', 'piotr.szerlomski@gmail.com', 'DwukropekTrzy', 'Piotrek', 'Szerlomski', 'Admin')
-ON CONFLICT (username) DO UPDATE SET
-    email = EXCLUDED.email,
-    password = EXCLUDED.password,
-    name = EXCLUDED.name,
-    surname = EXCLUDED.surname,
-    role = EXCLUDED.role;
+ON CONFLICT ("USERNAME") DO UPDATE SET
+    "EMAIL" = EXCLUDED."EMAIL",
+    "PASSWORD" = EXCLUDED."PASSWORD",
+    "NAME" = EXCLUDED."NAME",
+    "SURNAME" = EXCLUDED."SURNAME",
+    "ROLE" = EXCLUDED."ROLE";
 
-INSERT INTO "Users" (username, email, password, name, surname, role)
+INSERT INTO "Users" ("USERNAME", "EMAIL", "PASSWORD", "NAME", "SURNAME", "ROLE")
 VALUES ('ATKER', 'boczarkacper@gmail.com', 'TrzykropemTrzy', 'Kacper', 'Boczar', 'Admin')
-ON CONFLICT (username) DO UPDATE SET
-    email = EXCLUDED.email,
-    password = EXCLUDED.password,
-    name = EXCLUDED.name,
-    surname = EXCLUDED.surname,
-    role = EXCLUDED.role;
+ON CONFLICT ("USERNAME") DO UPDATE SET
+    "EMAIL" = EXCLUDED."EMAIL",
+    "PASSWORD" = EXCLUDED."PASSWORD",
+    "NAME" = EXCLUDED."NAME",
+    "SURNAME" = EXCLUDED."SURNAME",
+    "ROLE" = EXCLUDED."ROLE";
