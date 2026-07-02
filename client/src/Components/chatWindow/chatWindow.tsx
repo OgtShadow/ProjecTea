@@ -13,7 +13,7 @@ interface Message {
   text: string
 }
 
-const BACKEND_URL = ''
+const BACKEND_URL = import.meta.env.VITE_JAVA_API_URL || '';
 
 interface Props {
   currentUser: string | null

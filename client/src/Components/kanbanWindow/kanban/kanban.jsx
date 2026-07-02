@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import './kanban.css'
+import apiFetch from '../../../api'
 
 const COLUMNS = [
   { key: 'todo', title: 'Do zrobienia' },
@@ -26,7 +27,7 @@ function Kanban() {
 
   useEffect(() => {
     // fetch initial board and ensure 'trash' column exists
-    fetch('/api/kanban')
+    apiFetch('/api/kanban')
       .then((r) => r.json())
       .then((data) => {
         const cols = (data && data.columns) ? data.columns : {}
@@ -36,7 +37,7 @@ function Kanban() {
   }, [])
 
   useEffect(() => {
-    fetch('/api/users', { credentials: 'include' })
+    apiFetch('/api/users', { credentials: 'include' })
       .then((r) => {
         if (!r.ok) {
           throw new Error('users fetch failed')
@@ -74,7 +75,6 @@ function Kanban() {
       })
   }, [])
 
-  // HTML5 drag-and-drop handlers (replaces Sortable to avoid DOM/React conflicts)
   const onDragStart = (e, task, fromColumn, index) => {
     try {
       draggedRef.current = { taskId: String(task.id), fromColumn, index }
@@ -97,7 +97,7 @@ function Kanban() {
     const taskId = String(dragged.taskId)
     const from = dragged.fromColumn
     if (!taskId) return
-    // if dropped into trash -> delete
+    
     if (toColumn === 'trash') {
       setBoard((prev) => {
         const next = { columns: { todo: [...prev.columns.todo], inprogress: [...prev.columns.inprogress], done: [...prev.columns.done], trash: [...prev.columns.trash] } }
@@ -109,8 +109,7 @@ function Kanban() {
         return next
       })
 
-      // attempt to delete on backend
-      fetch(`/api/kanban/tasks/${taskId}`, { method: 'DELETE' })
+      apiFetch(`/api/kanban/tasks/${taskId}`, { method: 'DELETE' })
         .then((res) => {
           if (!res.ok) console.warn('backend delete responded', res.status)
         })
@@ -120,7 +119,6 @@ function Kanban() {
       return
     }
 
-    // update state: remove from source and append to target
     setBoard((prev) => {
       const next = { columns: { todo: [...prev.columns.todo], inprogress: [...prev.columns.inprogress], done: [...prev.columns.done], trash: [...prev.columns.trash] } }
       const src = next.columns[from]
@@ -129,15 +127,13 @@ function Kanban() {
       if (removeIdx !== -1) {
         ;[moved] = src.splice(removeIdx, 1)
       } else {
-        // if not found, nothing to move
         return prev
       }
       next.columns[toColumn].push(moved)
       return next
     })
 
-    // notify backend (append to end)
-    fetch('/api/kanban/move', {
+    apiFetch('/api/kanban/move', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ taskId, fromColumn: from, toColumn, toIndex: -1 })
     }).catch((e) => console.error('kanban move error', e))
@@ -171,7 +167,7 @@ function Kanban() {
             <button onClick={async () => {
           if (!newTitle.trim()) return
           try {
-            const res = await fetch('/api/kanban/tasks', {
+            const res = await apiFetch('/api/kanban/tasks', {
               method: 'POST', headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 title: newTitle,

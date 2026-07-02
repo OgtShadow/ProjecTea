@@ -1,8 +1,7 @@
 import React from 'react';
+import apiFetch from '../../api';
 
 function FilesWindow() {
-  const API_BASE = 'http://localhost:8081/api';
-
   const fileIcons: Record<string, string> = {
     '.jpg': '🖼️',
     '.jpeg': '🖼️',
@@ -31,7 +30,7 @@ function FilesWindow() {
 
   const handleFileClick = async (fileId: string) => {
     try {
-      const response = await fetch(`${API_BASE}/files/download/${fileId}`);
+      const response = await apiFetch(`/api/files/download/${fileId}`);
       if (response.ok) {
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
@@ -49,7 +48,7 @@ function FilesWindow() {
 
   const loadFiles = async () => {
     try {
-      const response = await fetch(`${API_BASE}/files`);
+      const response = await apiFetch(`/api/files`);
       const data = await response.json();
 
       if (response.ok && data.files) {
