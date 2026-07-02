@@ -11,6 +11,8 @@ RUN go env -w GO111MODULE=on && \
 
 FROM alpine:latest
 
+RUN apk --no-cache add ca-certificates
+
 WORKDIR /app
 RUN mkdir -p uploads
 
