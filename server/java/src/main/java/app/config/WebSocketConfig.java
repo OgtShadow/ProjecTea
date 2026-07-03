@@ -24,7 +24,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 .toArray(String[]::new);
 
         registry.addEndpoint("/ws")
-                .setAllowedOrigins(origins)
+            .setAllowedOriginPatterns("http://localhost:5173", "https://projectea-frontend.onrender.com")
             .withSockJS()
             .setSessionCookieNeeded(true);
     }

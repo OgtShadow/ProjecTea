@@ -12,7 +12,7 @@ interface StatData {
   count: number;
 }
 
-const BACKEND_URL = '';
+const BACKEND_URL = import.meta.env.VITE_JAVA_API_URL || '';
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d', '#ffc658'];
 
 interface Props {
