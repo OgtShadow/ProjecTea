@@ -14,14 +14,16 @@ public class SessionCookieService {
     @Value("${app.auth.jwt-expiration-seconds:86400}")
     private long jwtExpirationSeconds;
 
-    @Value("${app.auth.cookie-secure:false}")
+    // Zmienną secureCookie możemy zignorować w metodach poniżej, 
+    // ponieważ chmura bezwzględnie wymaga, aby było to "true"
+    @Value("${app.auth.cookie-secure:true}")
     private boolean secureCookie;
 
     public void writeSessionCookie(HttpServletResponse response, String token) {
         ResponseCookie cookie = ResponseCookie.from(COOKIE_NAME, token)
                 .httpOnly(true)
-                .secure(secureCookie)
-                .sameSite("Lax")
+                .secure(true)             
+                .sameSite("None")         
                 .path("/")
                 .maxAge(jwtExpirationSeconds)
                 .build();
@@ -32,8 +34,8 @@ public class SessionCookieService {
     public void clearSessionCookie(HttpServletResponse response) {
         ResponseCookie cookie = ResponseCookie.from(COOKIE_NAME, "")
                 .httpOnly(true)
-                .secure(secureCookie)
-                .sameSite("Lax")
+                .secure(true)             
+                .sameSite("None")         
                 .path("/")
                 .maxAge(0)
                 .build();
