@@ -1,13 +1,12 @@
-
 const JAVA_API_URL = import.meta.env.VITE_JAVA_API_URL || '';
 const GO_API_URL = import.meta.env.VITE_GO_API_URL || '';
 
 export async function apiFetch(path: string, init?: RequestInit): Promise<Response> {
   const headers = new Headers(init?.headers as HeadersInit)
-  if (init?.body && !headers.has('Content-Type')) {
+  
+  if (init?.body && !(init.body instanceof FormData) && !headers.has('Content-Type')) {
     headers.set('Content-Type', 'application/json')
   }
-
 
   let baseUrl = JAVA_API_URL; 
   if (

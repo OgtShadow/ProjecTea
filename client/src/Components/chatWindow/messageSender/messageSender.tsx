@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import './messageSender.css'
+import apiFetch from '../../../api'
 
 interface MessageSenderProps {
   wsConnected: boolean
@@ -27,7 +28,7 @@ function MessageSender({ wsConnected, onSendWs, onSendFile }: MessageSenderProps
       const formData = new FormData()
       formData.append('file', file)
 
-      const response = await fetch('/api/files/upload', {
+      const response = await apiFetch('/api/files/upload', {
         method: 'POST',
         body: formData,
         credentials: 'include',
