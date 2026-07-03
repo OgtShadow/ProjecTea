@@ -1,29 +1,16 @@
 # ProjecTea
 
-ProjecTea to projekt czatu teamowego z frontendem React + Vite oraz backendem Java Spring Boot, REST + WebSocket STOMP.
-W repozytorium znajduje się backend Go, ale obecnie jest szkieletem gotowym do wprowadzania tam serwisów.
+ProjecTea to projekt czatu teamowego z frontendem React + Vite oraz backendem Java Spring Boot, REST + WebSocket STOMP i dodatkowymi serwisami zbudowanymi w GO.
 
 ## Architektura
 
 - Frontend: React 19 + TypeScript + Vite (`client`)
 - Backend glowny: Spring Boot 4 (`server/java`)
+- Backend drugi w tym servisy GO (`server/go`)
 - WebSocket: STOMP + SockJS (`/ws`, `/app/send`, `/topic/messages`)
 - Dokumentacja API: Springdoc OpenAPI + Swagger UI
 - Reverse proxy (dev): Nginx (`nginx/default.conf`)
-- Demo Go: serwis `grpcmqtt` jako most miedzy gRPC i MQTT oraz prosty klient testowy (`server/go/grpcmqtt`)
-
-## ProjecTea
-
-ProjecTea to projekt czatu teamowego z frontendem React + Vite oraz backendem Java Spring Boot (REST + WebSocket STOMP).
-W repozytorium jest też backend Go używany jako scaffold oraz kilka demonstratorów (gRPC ↔ MQTT bridge).
-
-## Architektura
-
-- Frontend: React + Vite (`client`)
-- Backend główny: Spring Boot (`server/java`)
-- Backend Go: prosty serwis plików, Kanban i demo gRPC/MQTT (`server/go`)
-- MQTT broker: Mosquitto (w `docker-compose`)
-- Reverse proxy (dev): Nginx (`nginx/default.conf`)
+- Serwis `grpcmqtt` jako most miedzy gRPC i MQTT oraz prosty klient testowy (`server/go/grpcmqtt`)
 
 ## Struktura repozytorium
 
@@ -38,27 +25,13 @@ W repozytorium jest też backend Go używany jako scaffold oraz kilka demonstrat
 `-- docker-compose.dev.yml     # stack dev z nginx (HTTP/HTTPS)
 ```
 
-## Demo Go (gRPC + MQTT)
+## gRPC + MQTT
 
 W `server/go/grpcmqtt` znajduje się prosty most `grpcmqtt`:
 
 - gRPC: metoda `Send` oraz serwerowy stream `Subscribe`
 - MQTT: służy jako warstwa wymiany wiadomości
 - Docker Compose umożliwia szybkie uruchomienie `mosquitto` + `grpcmqtt` + przykładowego klienta
-
-Uruchomienie demo:
-
-```bash
-cd server/go/grpcmqtt
-docker compose up --build
-```
-
-Jeśli chcesz tylko sprawdzić backend Go lokalnie:
-
-```bash
-cd server/go
-go build ./...
-```
 
 Jeśli potrzebujesz wygenerować `pb` ręcznie (lokalnie), możesz wykorzystać tymczasowy kontener z `protoc` i pluginami. Przykład (dostosuj ścieżkę `proj`):
 
@@ -69,10 +42,9 @@ docker run --rm -v "${proj}:/defs" -w /defs golang:1.20-alpine sh -c "apk add --
 
 ## Powiadomienia (Notifications)
 
-W projekcie dodałem prosty system powiadomień. Powiadomienia są publikowane na MQTT topic `notifications` (przez serwis `grpcmqtt`). Na start wysyłamy:
+W projekcie znajduje się prosty system powiadomień. Powiadomienia są publikowane na MQTT topic `notifications` (przez serwis `grpcmqtt`). Na start wysyłamy:
 
 - powiadomienia o zmianach w Kanbanie (tworzenie/przenoszenie zadań)
-- powiadomienia o nowych wiadomościach na czacie (można wysłać do Go endpointu, który przekaże dalej)
 
 Jak odbierać powiadomienia:
 
@@ -99,7 +71,7 @@ curl -X POST http://localhost:8081/api/notify/chat -H "Content-Type: application
 	- Node.js 20+
 	- Java 25 (JDK)
 	- Maven (albo `mvnw` jesli dziala w srodowisku)
-	- Go 1.23+ (opcjonalnie, jesli uruchamiasz backend Go)
+	- Go 1.23+
 
 ## Uruchamianie przez Docker
 
@@ -115,6 +87,7 @@ Co uruchamia:
 - `java-backend` na porcie 8082
 - `go-backend` na porcie 8081
 - `nginx` na portach 80 i 443
+- bazy danych oracle oraz mongo
 
 Nginx przekierowuje:
 
@@ -128,7 +101,7 @@ Nginx przekierowuje:
 docker compose up --build
 ```
 
-Ten wariant uruchamia ffrontend + go-backend + java-backend bez Nginx.
+Ten wariant uruchamia frontend + go-backend + java-backend bez Nginx.
 
 ## Uruchamianie lokalne (bez Dockera)
 
@@ -154,15 +127,12 @@ cd server/java
 ./mvnw spring-boot:run
 ```
 
-### Backend Go (opcjonalnie)
+### Backend Go
 
-Backend Go teraz udostepnia serwis do wysylania i pobierania plikow w czacie.
-
-- Base URL: `https://localhost:8081`
-- Upload pliku: `POST /api/files/upload`
-- Pobieranie pliku: `GET /api/files/download/{fileId}`
-- Listowanie plikow: `GET /api/files`
-- Usuwanie pliku: `DELETE /api/files/{fileId}`
+```bash
+cd server/go
+go build -o app ./src
+```
 
 Szczegolowa dokumentacja: [server/go/README.md](server/go/README.md)
 
@@ -175,6 +145,14 @@ Szczegolowa dokumentacja: [server/go/README.md](server/go/README.md)
 - REST messages:
 	- `GET /api/messages`
 	- `POST /api/messages`
+
+### Go backend
+
+- Base URL: `https://localhost:8081`
+- Upload pliku: `POST /api/files/upload`
+- Pobieranie pliku: `GET /api/files/download/{fileId}`
+- Listowanie plikow: `GET /api/files`
+- Usuwanie pliku: `DELETE /api/files/{fileId}`
 
 ### WebSocket/STOMP
 
@@ -255,17 +233,3 @@ Krotka instrukcja uruchomienia:
 4. Wyniki testu pojawiaja sie w `server/jmeter/report/index.html`.
 
 Jesli chcesz wykonac test recznie w trybie non-GUI, szczegoly uruchomienia i dokumentacja screenshotow sa opisane w [server/jmeter/README_JMeter.md](server/jmeter/README_JMeter.md).
-
-## Przydatne komendy
-
-```bash
-# stop stacka dev
-docker compose -f docker-compose.dev.yml stop
-
-# podglad logow stacka dev
-docker compose -f docker-compose.dev.yml logs -f
-
-# build backendu Java bez testow
-cd server/java && mvn -DskipTests compile
-```
-.
