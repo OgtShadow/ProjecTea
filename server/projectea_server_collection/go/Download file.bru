@@ -5,7 +5,7 @@ meta {
 }
 
 get {
-  url: http://localhost:8081/api/files/download/{{lastFileId}}
+  url: {{GO_API_URL}}/api/files/download/{{lastFileId}}
   body: none
   auth: inherit
 }

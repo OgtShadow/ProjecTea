@@ -5,7 +5,7 @@ meta {
 }
 
 delete {
-  url: http://localhost:8081/api/kanban/tasks/{{kanbanTaskId}}
+  url: {{GO_API_URL}}/api/kanban/tasks/{{kanbanTaskId}}
   body: none
   auth: inherit
 }
